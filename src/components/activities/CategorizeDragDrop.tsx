@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, RotateCcw, Sparkles, AlertCircle, Move } from 'lucide-react';
+import { Check, RotateCcw, Sparkles, AlertCircle } from 'lucide-react';
 import { sounds } from '../../utils/sound';
 
 export interface CategorizeItem {
@@ -192,8 +192,7 @@ export const CategorizeDragDrop: React.FC<Props> = ({ data, onComplete }) => {
                 </button>
               ))}
               {bucket1.length === 0 && (
-                <div className="w-full text-center text-xs text-slate-400 italic py-6 flex items-center justify-center gap-1">
-                  <Move className="w-3.5 h-3.5 text-brand-400" />
+                <div className="w-full text-center text-xs text-slate-400 italic py-6 flex items-center justify-center">
                   <span>Drop items here</span>
                 </div>
               )}
@@ -242,8 +241,7 @@ export const CategorizeDragDrop: React.FC<Props> = ({ data, onComplete }) => {
                 </button>
               ))}
               {bucket2.length === 0 && (
-                <div className="w-full text-center text-xs text-slate-400 italic py-6 flex items-center justify-center gap-1">
-                  <Move className="w-3.5 h-3.5 text-purple-400" />
+                <div className="w-full text-center text-xs text-slate-400 italic py-6 flex items-center justify-center">
                   <span>Drop items here</span>
                 </div>
               )}
@@ -254,9 +252,8 @@ export const CategorizeDragDrop: React.FC<Props> = ({ data, onComplete }) => {
 
       {/* Available Unassigned Items Bank */}
       <div className="mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/90">
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center flex items-center justify-center gap-1">
-          <Move className="w-3.5 h-3.5" />
-          <span>Draggable Cards ({unassigned.length} remaining)</span>
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center">
+          Draggable Cards ({unassigned.length} remaining)
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -268,8 +265,7 @@ export const CategorizeDragDrop: React.FC<Props> = ({ data, onComplete }) => {
               onDragEnd={handleDragEnd}
               className="flex items-center gap-1.5 bg-white border border-slate-200 hover:border-brand-300 p-1.5 rounded-xl shadow-soft-sm cursor-grab active:cursor-grabbing select-none transition-all"
             >
-              <Move className="w-3 h-3 text-slate-400 ml-1" />
-              <span className="text-xs font-bold text-slate-800 px-1">{item.text}</span>
+              <span className="text-xs font-bold text-slate-800 px-2">{item.text}</span>
               <button
                 onClick={() => handleAssign(item, 1)}
                 className="px-2 py-0.5 rounded-md bg-brand-50 hover:bg-brand-600 hover:text-white text-brand-700 text-[10px] font-bold transition-colors"

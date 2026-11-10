@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Check, Sparkles, AlertCircle, Move } from 'lucide-react';
+import { Play, Pause, RotateCcw, Check, Sparkles, AlertCircle } from 'lucide-react';
 import { ListenArrangeData } from '../../types';
 import { sounds } from '../../utils/sound';
 import { SpeechService } from '../../utils/speech';
@@ -196,8 +196,7 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
         }`}
       >
         {arrangedWords.length === 0 ? (
-          <div className="w-full text-center text-sm font-medium text-slate-400 py-3 flex items-center justify-center gap-1.5">
-            <Move className="w-4 h-4 text-brand-600" />
+          <div className="w-full text-center text-sm font-medium text-slate-400 py-3 flex items-center justify-center">
             <span>Drag or tap the spoken words below in the sequence you hear</span>
           </div>
         ) : (
@@ -208,10 +207,9 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
               onDragStart={(e) => handleDragStart(e, 'arranged', idx, word)}
               onDragEnd={handleDragEnd}
               onClick={() => handleRemoveWord(word, idx)}
-              className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-soft-sm active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-soft-sm active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none"
               title="Drag to rearrange, or click to remove"
             >
-              <Move className="w-3.5 h-3.5 text-brand-200" />
               <span>{word}</span>
             </button>
           ))
@@ -220,9 +218,8 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
 
       {/* Word Options Bank */}
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center flex items-center justify-center gap-1">
-          <Move className="w-3.5 h-3.5" />
-          <span>Available Spoken Words (Drag or Tap)</span>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center">
+          Available Spoken Words (Drag or Tap)
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2">
           {bankWords.map((word, idx) => (
@@ -232,9 +229,8 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
               onDragStart={(e) => handleDragStart(e, 'bank', idx, word)}
               onDragEnd={handleDragEnd}
               onClick={() => handleSelectWord(word, idx)}
-              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold text-sm shadow-soft-sm hover:border-brand-300 active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold text-sm shadow-soft-sm hover:border-brand-300 active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none"
             >
-              <Move className="w-3.5 h-3.5 text-slate-400" />
               <span>{word}</span>
             </button>
           ))}

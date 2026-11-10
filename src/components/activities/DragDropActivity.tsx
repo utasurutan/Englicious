@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RotateCcw, Check, Sparkles, AlertCircle, Move } from 'lucide-react';
+import { RotateCcw, Check, Sparkles, AlertCircle } from 'lucide-react';
 import { DragDropData } from '../../types';
 import { sounds } from '../../utils/sound';
 import { SpeechService } from '../../utils/speech';
@@ -237,8 +237,8 @@ export const DragDropActivity: React.FC<Props> = ({ data, onComplete }) => {
       >
         {sentenceWords.length === 0 ? (
           <div className="w-full text-center text-sm font-medium text-slate-400 select-none py-4 flex flex-col items-center justify-center gap-1.5">
-            <span className="flex items-center gap-1 text-slate-500 font-semibold">
-              <Move className="w-4 h-4 text-brand-600 animate-pulse" /> Drag or tap words below into this slot
+            <span className="text-slate-500 font-semibold">
+              Drag or tap words below to build the sentence
             </span>
             <span className="text-xs text-slate-400">You can also drag words to rearrange their order</span>
           </div>
@@ -270,12 +270,11 @@ export const DragDropActivity: React.FC<Props> = ({ data, onComplete }) => {
                   onDragStart={(e) => handleDragStart(e, 'sentence', idx, word)}
                   onDragEnd={handleDragEnd}
                   onClick={() => handleWordClickFromSentence(word, idx)}
-                  className={`px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm sm:text-base shadow-soft-sm active:scale-95 transition-all flex items-center gap-1.5 cursor-grab active:cursor-grabbing select-none ${
+                  className={`px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm sm:text-base shadow-soft-sm active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none ${
                     isBeingDragged ? 'opacity-40 scale-95 border-2 border-dashed border-white' : ''
                   }`}
                   title="Drag to rearrange, or click to return to word bank"
                 >
-                  <Move className="w-3.5 h-3.5 text-brand-200" />
                   <span>{word}</span>
                 </button>
               </div>
@@ -295,9 +294,8 @@ export const DragDropActivity: React.FC<Props> = ({ data, onComplete }) => {
             : 'bg-transparent border-transparent'
         }`}
       >
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center flex items-center justify-center gap-1.5">
-          <Move className="w-3.5 h-3.5 text-slate-400" />
-          <span>Available Words (Drag or Tap to Place)</span>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center">
+          Available Words (Drag or Tap to Place)
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-2.5 min-h-[60px]">
@@ -311,12 +309,11 @@ export const DragDropActivity: React.FC<Props> = ({ data, onComplete }) => {
                 onDragStart={(e) => handleDragStart(e, 'bank', idx, word)}
                 onDragEnd={handleDragEnd}
                 onClick={() => handleWordClickFromBank(word, idx)}
-                className={`px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 font-semibold text-sm sm:text-base shadow-soft-sm hover:border-brand-400 active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none flex items-center gap-2 ${
+                className={`px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-800 font-semibold text-sm sm:text-base shadow-soft-sm hover:border-brand-400 active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none ${
                   isBeingDragged ? 'opacity-40 scale-95 border-brand-400' : ''
                 }`}
                 title="Drag into the sentence box above or click to place"
               >
-                <Move className="w-3.5 h-3.5 text-slate-400" />
                 <span>{word}</span>
               </button>
             );
