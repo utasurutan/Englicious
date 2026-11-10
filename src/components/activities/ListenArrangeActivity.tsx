@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Check, Sparkles, AlertCircle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Check, Sparkles, AlertCircle, Move } from 'lucide-react';
 import { ListenArrangeData } from '../../types';
 import { sounds } from '../../utils/sound';
 import { SpeechService } from '../../utils/speech';
@@ -9,11 +9,21 @@ interface Props {
   onComplete: (isCorrect: boolean) => void;
 }
 
+interface DraggedWord {
+  source: 'bank' | 'arranged';
+  index: number;
+  word: string;
+}
+
 export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bankWords, setBankWords] = useState<string[]>(data.words);
   const [arrangedWords, setArrangedWords] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+
+  // Drag and drop states
+  const [draggedItem, setDraggedItem] = useState<DraggedWord | null>(null);
+  const [isOverArrangedDock, setIsOverArrangedDock] = useState(false);
 
   const handlePlayAudio = () => {
     sounds.playClick();
@@ -42,6 +52,7 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
     setBankWords(data.words);
     setArrangedWords([]);
     setFeedback(null);
+    setDraggedItem(null);
   };
 
   const handleCheck = () => {
@@ -59,6 +70,69 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
       sounds.playIncorrect();
       setFeedback('incorrect');
     }
+  };
+
+  // Drag & drop handlers
+  const handleDragStart = (e: React.DragEvent, source: 'bank' | 'arranged', index: number, word: string) => {
+    setFeedback(null);
+    const item: DraggedWord = { source, index, word };
+    setDraggedItem(item);
+    e.dataTransfer.setData('application/json', JSON.stringify(item));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setIsOverArrangedDock(false);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetIndex?: number) => {
+    e.preventDefault();
+    setIsOverArrangedDock(false);
+
+    const rawData = e.dataTransfer.getData('application/json');
+    let item = draggedItem;
+    if (rawData) {
+      try {
+        item = JSON.parse(rawData);
+      } catch {
+        // fallback to state
+      }
+    }
+
+    if (!item) return;
+
+    sounds.playClick();
+
+    if (item.source === 'bank') {
+      const wordToInsert = item.word;
+      const bankIndex = item.index;
+
+      setBankWords(prev => prev.filter((_, i) => i !== bankIndex));
+      setArrangedWords(prev => {
+        const next = [...prev];
+        if (targetIndex !== undefined && targetIndex >= 0 && targetIndex <= next.length) {
+          next.splice(targetIndex, 0, wordToInsert);
+        } else {
+          next.push(wordToInsert);
+        }
+        return next;
+      });
+    } else if (item.source === 'arranged') {
+      const fromIndex = item.index;
+      const toIndex = targetIndex !== undefined ? targetIndex : arrangedWords.length - 1;
+
+      if (fromIndex === toIndex) return;
+
+      setArrangedWords(prev => {
+        const next = [...prev];
+        const [moved] = next.splice(fromIndex, 1);
+        next.splice(toIndex, 0, moved);
+        return next;
+      });
+    }
+
+    setDraggedItem(null);
   };
 
   return (
@@ -98,27 +172,47 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
       </div>
 
       {/* Arranged Slots Dock */}
-      <div className={`min-h-[100px] p-4 rounded-2xl border-2 transition-all flex flex-wrap items-center gap-2 mb-6 ${
-        feedback === 'correct'
-          ? 'bg-mint-50/70 border-mint-500 shadow-glow-success'
-          : feedback === 'incorrect'
-          ? 'bg-coral-50/50 border-coral-400'
-          : arrangedWords.length > 0
-          ? 'bg-white border-brand-300 shadow-soft'
-          : 'bg-slate-50/70 border-dashed border-slate-300'
-      }`}>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!isOverArrangedDock) setIsOverArrangedDock(true);
+        }}
+        onDragLeave={(e) => {
+          if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+          setIsOverArrangedDock(false);
+        }}
+        onDrop={(e) => handleDrop(e)}
+        className={`min-h-[100px] p-4 rounded-2xl border-2 transition-all flex flex-wrap items-center gap-2 mb-6 ${
+          feedback === 'correct'
+            ? 'bg-mint-50/70 border-mint-500 shadow-glow-success'
+            : feedback === 'incorrect'
+            ? 'bg-coral-50/50 border-coral-400'
+            : isOverArrangedDock
+            ? 'bg-brand-50/80 border-brand-500 ring-4 ring-brand-100 shadow-soft-lg'
+            : arrangedWords.length > 0
+            ? 'bg-white border-brand-300 shadow-soft'
+            : 'bg-slate-50/70 border-dashed border-slate-300'
+        }`}
+      >
         {arrangedWords.length === 0 ? (
-          <div className="w-full text-center text-sm font-medium text-slate-400 py-3">
-            Tap the spoken words below in the sequence you hear
+          <div className="w-full text-center text-sm font-medium text-slate-400 py-3 flex items-center justify-center gap-1.5">
+            <Move className="w-4 h-4 text-brand-600" />
+            <span>Drag or tap the spoken words below in the sequence you hear</span>
           </div>
         ) : (
           arrangedWords.map((word, idx) => (
             <button
               key={`${word}-${idx}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 'arranged', idx, word)}
+              onDragEnd={handleDragEnd}
               onClick={() => handleRemoveWord(word, idx)}
-              className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-soft-sm active:scale-95 transition-all"
+              className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm shadow-soft-sm active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none flex items-center gap-1.5"
+              title="Drag to rearrange, or click to remove"
             >
-              {word}
+              <Move className="w-3.5 h-3.5 text-brand-200" />
+              <span>{word}</span>
             </button>
           ))
         )}
@@ -126,17 +220,22 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
 
       {/* Word Options Bank */}
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center">
-          Available Spoken Words
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 text-center flex items-center justify-center gap-1">
+          <Move className="w-3.5 h-3.5" />
+          <span>Available Spoken Words (Drag or Tap)</span>
         </p>
         <div className="flex flex-wrap items-center justify-center gap-2">
           {bankWords.map((word, idx) => (
             <button
               key={`${word}-${idx}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 'bank', idx, word)}
+              onDragEnd={handleDragEnd}
               onClick={() => handleSelectWord(word, idx)}
-              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold text-sm shadow-soft-sm hover:border-brand-300 active:scale-95 transition-all"
+              className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold text-sm shadow-soft-sm hover:border-brand-300 active:scale-95 transition-all cursor-grab active:cursor-grabbing select-none flex items-center gap-1.5"
             >
-              {word}
+              <Move className="w-3.5 h-3.5 text-slate-400" />
+              <span>{word}</span>
             </button>
           ))}
         </div>
@@ -175,10 +274,9 @@ export const ListenArrangeActivity: React.FC<Props> = ({ data, onComplete }) => 
       {feedback === 'incorrect' && (
         <div className="mt-4 p-3.5 rounded-xl bg-coral-50 border border-coral-200 text-coral-800 flex items-center gap-2 text-sm font-semibold animate-pop-in">
           <AlertCircle className="w-4 h-4 text-coral-600" />
-          <span>The order doesn't match the spoken clip. Replay and try again!</span>
+          <span>The order doesn't match the spoken clip. Replay and try dragging the words!</span>
         </div>
       )}
     </div>
   );
 };
-

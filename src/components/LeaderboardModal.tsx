@@ -168,3 +168,4 @@ export const LeaderboardModal: React.FC<Props> = ({ isOpen, onClose, currentUser
     </div>
   );
 };
+

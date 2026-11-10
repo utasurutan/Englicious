@@ -128,3 +128,4 @@ export const CertificateModal: React.FC<Props> = ({
     </div>
   );
 };
+

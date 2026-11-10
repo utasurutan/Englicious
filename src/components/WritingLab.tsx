@@ -499,3 +499,4 @@ export const WritingLab: React.FC = () => {
     </div>
   );
 };
+

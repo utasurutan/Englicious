@@ -78,3 +78,4 @@ export const ActivityHeatmap: React.FC<Props> = ({ streak }) => {
     </div>
   );
 };
+

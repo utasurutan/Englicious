@@ -347,3 +347,4 @@ export const SpeedChallenge: React.FC<Props> = ({ onClose, onRewardXp }) => {
     </div>
   );
 };
+
