@@ -10,6 +10,11 @@ import { InteractiveLesson } from './components/InteractiveLesson';
 import { ExamPrep } from './components/ExamPrep';
 import { ListeningLab } from './components/ListeningLab';
 import { ReadingLab } from './components/ReadingLab';
+import { WritingLab } from './components/WritingLab';
+import { SpeakingRoleplay } from './components/SpeakingRoleplay';
+import { VocabSRSDeck } from './components/VocabSRSDeck';
+import { SpeedChallenge } from './components/SpeedChallenge';
+import { LeaderboardModal } from './components/LeaderboardModal';
 import { ProgressDashboard } from './components/ProgressDashboard';
 import { OnboardingModal } from './components/OnboardingModal';
 import { sounds } from './utils/sound';
@@ -18,13 +23,13 @@ import { SpeechService } from './utils/speech';
 export const App: React.FC = () => {
   // Current view state
   const [currentView, setCurrentView] = useState<string>('landing');
-  const [practiceTab, setPracticeTab] = useState<'listening' | 'reading'>('listening');
+  const [practiceTab, setPracticeTab] = useState<'listening' | 'reading' | 'writing' | 'roleplay' | 'srs' | 'speed'>('listening');
 
-  // Active full-screen interactive lesson
+  // Modals state
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
-
-  // Onboarding modal state
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isSpeedChallengeOpen, setIsSpeedChallengeOpen] = useState(false);
 
   // Sound cues state
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -135,15 +140,38 @@ export const App: React.FC = () => {
     setCurrentView('dashboard');
   };
 
+  const handleNavigate = (view: string) => {
+    if (view === 'practice-writing') {
+      setCurrentView('practice');
+      setPracticeTab('writing');
+    } else if (view === 'practice-roleplay') {
+      setCurrentView('practice');
+      setPracticeTab('roleplay');
+    } else if (view === 'practice-srs') {
+      setCurrentView('practice');
+      setPracticeTab('srs');
+    } else {
+      setCurrentView(view);
+    }
+  };
+
+  const handleRewardXp = (xpEarned: number) => {
+    setUser(prev => ({
+      ...prev,
+      xp: prev.xp + xpEarned
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans pb-16 md:pb-0">
       {/* Top Desktop & Tablet Navigation */}
       <Navbar
         currentView={currentView}
-        onNavigate={setCurrentView}
+        onNavigate={handleNavigate}
         user={user}
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
+        onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
       />
 
       {/* Main Routed View Content */}
@@ -161,7 +189,8 @@ export const App: React.FC = () => {
             user={user}
             lessons={lessons}
             onStartLesson={handleStartLesson}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
+            onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
           />
         )}
 
@@ -174,33 +203,82 @@ export const App: React.FC = () => {
 
         {currentView === 'practice' && (
           <div>
-            <div className="max-w-4xl mx-auto px-4 pt-6 flex items-center justify-center gap-3">
-              <div className="flex items-center p-1.5 rounded-2xl bg-slate-100 border border-slate-200">
+            {/* Practice Studio Sub-Navigation Bar */}
+            <div className="max-w-6xl mx-auto px-4 pt-6 pb-2 overflow-x-auto flex items-center justify-start sm:justify-center gap-2">
+              <div className="flex items-center p-1.5 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-bold whitespace-nowrap">
                 <button
                   onClick={() => {
                     sounds.playClick();
                     setPracticeTab('listening');
                   }}
-                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
                     practiceTab === 'listening' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  🎧 Listening & Dictation Lab
+                  🎧 Listening Lab
                 </button>
                 <button
                   onClick={() => {
                     sounds.playClick();
                     setPracticeTab('reading');
                   }}
-                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
                     practiceTab === 'reading' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  📖 Academic Reading Studio
+                  📖 Reading Studio
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setPracticeTab('writing');
+                  }}
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
+                    practiceTab === 'writing' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  ✍️ Writing Lab
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setPracticeTab('roleplay');
+                  }}
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
+                    practiceTab === 'roleplay' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  🗣️ AI Roleplay
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setPracticeTab('srs');
+                  }}
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
+                    practiceTab === 'srs' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  🗂️ Vocab SRS Decks
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    setIsSpeedChallengeOpen(true);
+                  }}
+                  className="px-3 sm:px-4 py-2 rounded-xl transition-all text-amber-700 hover:bg-amber-100/50 flex items-center gap-1"
+                >
+                  ⚡ 60s Speed Drill
                 </button>
               </div>
             </div>
-            {practiceTab === 'listening' ? <ListeningLab /> : <ReadingLab />}
+
+            {/* Studio Views */}
+            {practiceTab === 'listening' && <ListeningLab />}
+            {practiceTab === 'reading' && <ReadingLab />}
+            {practiceTab === 'writing' && <WritingLab />}
+            {practiceTab === 'roleplay' && <SpeakingRoleplay />}
+            {practiceTab === 'srs' && <VocabSRSDeck />}
           </div>
         )}
 
@@ -222,7 +300,7 @@ export const App: React.FC = () => {
       {/* Mobile Bottom Navigation */}
       <MobileNav
         currentView={currentView}
-        onNavigate={setCurrentView}
+        onNavigate={handleNavigate}
       />
 
       {/* Fullscreen Interactive Lesson Overlay */}
@@ -240,6 +318,25 @@ export const App: React.FC = () => {
         onClose={() => setIsOnboardingOpen(false)}
         onComplete={handleCompleteOnboarding}
       />
+
+      {/* Weekly League Leaderboard Modal */}
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
+        currentUserXp={user.xp}
+      />
+
+      {/* 60s Speed Drill Modal */}
+      {isSpeedChallengeOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-xl rounded-3xl shadow-soft-lg overflow-hidden animate-pop-in">
+            <SpeedChallenge
+              onClose={() => setIsSpeedChallengeOpen(false)}
+              onRewardXp={handleRewardXp}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

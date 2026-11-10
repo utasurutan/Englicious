@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { Lesson } from '../types';
 import { FlashcardActivity } from './activities/FlashcardActivity';
 import { DragDropActivity } from './activities/DragDropActivity';
+import { CategorizeDragDrop } from './activities/CategorizeDragDrop';
 import { MatchingActivity } from './activities/MatchingActivity';
 import { FillBlankActivity } from './activities/FillBlankActivity';
 import { ListeningActivity } from './activities/ListeningActivity';
@@ -107,6 +108,12 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
             )}
             {currentActivity.data.kind === 'drag-drop' && (
               <DragDropActivity
+                data={currentActivity.data.data}
+                onComplete={() => handleNextActivity(currentActivity.xpValue)}
+              />
+            )}
+            {currentActivity.data.kind === 'categorize' && (
+              <CategorizeDragDrop
                 data={currentActivity.data.data}
                 onComplete={() => handleNextActivity(currentActivity.xpValue)}
               />

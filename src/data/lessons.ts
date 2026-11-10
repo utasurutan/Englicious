@@ -1,6 +1,7 @@
 import { Lesson } from '../types';
 
 export const SAMPLE_LESSONS: Lesson[] = [
+  // 1. SIMPLE PAST TENSE (Intermediate Grammar)
   {
     id: 'lesson-past-tense',
     title: 'Simple Past Tense',
@@ -102,10 +103,12 @@ export const SAMPLE_LESSONS: Lesson[] = [
       }
     ]
   },
+
+  // 2. EVERYDAY VOCABULARY (Beginner Vocabulary)
   {
     id: 'lesson-vocab-foundations',
-    title: 'Everyday Vocabulary',
-    subtitle: 'High-frequency words for daily conversations & work',
+    title: 'Everyday Vocabulary Foundations',
+    subtitle: 'High-frequency words for daily conversations & routines',
     level: 'Beginner',
     category: 'Vocabulary',
     estimatedMinutes: 6,
@@ -162,9 +165,380 @@ export const SAMPLE_LESSONS: Lesson[] = [
             explanation: 'With the first-person singular pronoun "I", the present form of "be" is always "am".'
           }
         }
+      },
+      {
+        id: 'vocab-act-4-drag',
+        type: 'drag-drop',
+        title: 'Build Daily Greeting',
+        xpValue: 15,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Arrange the greeting politely.',
+            scrambledWords: ['morning', 'Good', 'you', 'how', 'are', 'today?'],
+            correctSentence: 'Good morning how are you today?',
+            translationHint: 'Greeting + Question'
+          }
+        }
       }
     ]
   },
+
+  // 3. PHRASAL VERBS IN ACTION (Intermediate Vocabulary & Drag-and-Drop)
+  {
+    id: 'lesson-phrasal-verbs',
+    title: 'Phrasal Verbs in Daily Action',
+    subtitle: 'Master natural colloquial verbs and separable particles',
+    level: 'Intermediate',
+    category: 'Vocabulary',
+    estimatedMinutes: 9,
+    xpTotal: 90,
+    progressPercent: 40,
+    completed: false,
+    unlocked: true,
+    activities: [
+      {
+        id: 'pv-flash-1',
+        type: 'flashcard',
+        title: 'Essential Phrasal Verb',
+        xpValue: 15,
+        data: {
+          kind: 'flashcard',
+          data: {
+            word: 'LOOK FORWARD TO',
+            phonetic: '/lʊk ˈfɔːrwərd tuː/',
+            accentNote: 'look for-ward to',
+            partOfSpeech: 'phrasal verb (+ gerund/noun)',
+            meaning: 'To anticipate something in the future with enthusiasm and pleasure.',
+            example: 'I look forward to meeting your development team next Monday.',
+            translationHint: 'Anticipate excitedly',
+            audioPrompt: 'look forward to. I look forward to meeting you.'
+          }
+        }
+      },
+      {
+        id: 'pv-categorize-1',
+        type: 'categorize',
+        title: 'Sort Phrasal Verbs by Particle',
+        xpValue: 25,
+        data: {
+          kind: 'categorize',
+          data: {
+            instruction: 'Classify these common phrasal verbs by their core prepositional particle:',
+            category1: 'Verbs with "UP"',
+            category2: 'Verbs with "OUT"',
+            items: [
+              { id: 'c1', text: 'Give up', targetCategory: 'Verbs with "UP"' },
+              { id: 'c2', text: 'Find out', targetCategory: 'Verbs with "OUT"' },
+              { id: 'c3', text: 'Look up', targetCategory: 'Verbs with "UP"' },
+              { id: 'c4', text: 'Run out of', targetCategory: 'Verbs with "OUT"' },
+              { id: 'c5', text: 'Bring up', targetCategory: 'Verbs with "UP"' },
+              { id: 'c6', text: 'Figure out', targetCategory: 'Verbs with "OUT"' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pv-drag-drop-2',
+        type: 'drag-drop',
+        title: 'Sentence Order: Separable Phrasal Verb',
+        xpValue: 20,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Arrange the sentence with the pronoun in between the verb and particle.',
+            scrambledWords: ['turned', 'down', 'lucrative', 'the', 'She', 'offer'],
+            correctSentence: 'She turned down the lucrative offer',
+            translationHint: 'Subject + turned + down + object'
+          }
+        }
+      },
+      {
+        id: 'pv-fill-3',
+        type: 'fill-blank',
+        title: 'Complete the Phrasal Verb',
+        xpValue: 15,
+        data: {
+          kind: 'fill-blank',
+          data: {
+            sentenceWithBlank: 'We have completely run ___ of coffee beans this morning.',
+            options: ['out', 'up', 'down', 'off'],
+            correctAnswer: 'out',
+            explanation: '"Run out of" means to exhaust the supply of an item so that none is left.'
+          }
+        }
+      },
+      {
+        id: 'pv-match-4',
+        type: 'matching',
+        title: 'Phrasal Verb Meanings',
+        xpValue: 15,
+        data: {
+          kind: 'matching',
+          pairs: [
+            { id: 'm1', word: 'Call off', definition: 'To cancel an event' },
+            { id: 'm2', word: 'Put off', definition: 'To delay or postpone' },
+            { id: 'm3', word: 'Take after', definition: 'To resemble an older family member' },
+            { id: 'm4', word: 'Catch on', definition: 'To understand or become popular' }
+          ]
+        }
+      }
+    ]
+  },
+
+  // 4. CONDITIONAL CLAUSES (Intermediate Grammar)
+  {
+    id: 'lesson-conditionals',
+    title: 'Conditional Mastery: Real & Unreal Hypotheses',
+    subtitle: 'Zero, First, Second & Third conditionals with confidence',
+    level: 'Intermediate',
+    category: 'Grammar',
+    estimatedMinutes: 10,
+    xpTotal: 85,
+    progressPercent: 20,
+    completed: false,
+    unlocked: true,
+    activities: [
+      {
+        id: 'cond-drag-1',
+        type: 'drag-drop',
+        title: 'Build a Second Conditional Hypothesis',
+        xpValue: 20,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Assemble the unreal present hypothesis:',
+            scrambledWords: ['had', 'If', 'time', 'more', 'I', 'would', 'travel', 'the', 'world'],
+            correctSentence: 'If I had more time I would travel the world',
+            translationHint: 'If + Past Simple + would + infinitive'
+          }
+        }
+      },
+      {
+        id: 'cond-fill-2',
+        type: 'fill-blank',
+        title: 'First Conditional Real Future',
+        xpValue: 15,
+        data: {
+          kind: 'fill-blank',
+          data: {
+            sentenceWithBlank: 'If it ___ tomorrow morning, the outdoor soccer match will be rescheduled.',
+            options: ['rains', 'will rain', 'rained', 'is rain'],
+            correctAnswer: 'rains',
+            explanation: 'In the if-clause of a first conditional sentence, we use simple present ("rains"), not future with "will".'
+          }
+        }
+      },
+      {
+        id: 'cond-categorize-3',
+        type: 'categorize',
+        title: 'Categorize Real vs Unreal Conditionals',
+        xpValue: 25,
+        data: {
+          kind: 'categorize',
+          data: {
+            instruction: 'Classify whether these clauses express real possibilities or unreal/hypothetical ideas:',
+            category1: 'Real Future (1st Conditional)',
+            category2: 'Unreal Hypothesis (2nd Conditional)',
+            items: [
+              { id: 'cd1', text: 'If you study hard, you will pass', targetCategory: 'Real Future (1st Conditional)' },
+              { id: 'cd2', text: 'If I won a million dollars, I would buy a boat', targetCategory: 'Unreal Hypothesis (2nd Conditional)' },
+              { id: 'cd3', text: 'If the train arrives on time, we will call you', targetCategory: 'Real Future (1st Conditional)' },
+              { id: 'cd4', text: 'If she knew the answer, she would tell us', targetCategory: 'Unreal Hypothesis (2nd Conditional)' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'cond-listen-4',
+        type: 'listening',
+        title: 'Catch the Spoken Contraction ("I\'d")',
+        xpValue: 25,
+        data: {
+          kind: 'listening',
+          data: {
+            audioText: 'If I were in your position, I would take the scholarship offer immediately.',
+            instruction: 'Listen carefully to the advice given by the academic advisor.',
+            question: 'What does the advisor recommend?',
+            options: [
+              'Accepting the scholarship offer right away',
+              'Declining the scholarship and staying home',
+              'Waiting until next year to apply',
+              'Negotiating a higher tuition fee'
+            ],
+            correctIndex: 0,
+            transcript: 'If I were in your position, I would take the scholarship offer immediately.',
+            explanation: 'The speaker uses "If I were in your position, I would take..." to give emphatic advice.'
+          }
+        }
+      }
+    ]
+  },
+
+  // 5. ACADEMIC PASSIVE VOICE & FORMAL REGISTER (Advanced Grammar)
+  {
+    id: 'lesson-passive-voice',
+    title: 'Passive Voice in Academic & IELTS Writing',
+    subtitle: 'Shift focus to empirical findings, methodology, and objectivity',
+    level: 'Advanced',
+    category: 'Writing',
+    estimatedMinutes: 11,
+    xpTotal: 95,
+    progressPercent: 0,
+    completed: false,
+    unlocked: true,
+    activities: [
+      {
+        id: 'pas-categorize-1',
+        type: 'categorize',
+        title: 'Formal Academic vs Informal Casual Register',
+        xpValue: 25,
+        data: {
+          kind: 'categorize',
+          data: {
+            instruction: 'Distinguish between formal academic expressions and casual conversational slang:',
+            category1: 'Formal Academic Register',
+            category2: 'Informal Casual Register',
+            items: [
+              { id: 'rg1', text: 'Substantiate the hypothesis', targetCategory: 'Formal Academic Register' },
+              { id: 'rg2', text: 'Kind of cool', targetCategory: 'Informal Casual Register' },
+              { id: 'rg3', text: 'Consequently, the data suggests', targetCategory: 'Formal Academic Register' },
+              { id: 'rg4', text: 'A bunch of stuff', targetCategory: 'Informal Casual Register' },
+              { id: 'rg5', text: 'Conduct an empirical review', targetCategory: 'Formal Academic Register' },
+              { id: 'rg6', text: 'Gonna chill out', targetCategory: 'Informal Casual Register' }
+            ]
+          }
+        }
+      },
+      {
+        id: 'pas-drag-2',
+        type: 'drag-drop',
+        title: 'Construct an Academic Passive Statement',
+        xpValue: 25,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Form the objective scientific sentence in passive voice:',
+            scrambledWords: ['was', 'vaccine', 'The', 'experimental', 'trialed', 'in', 'fifty', 'clinics'],
+            correctSentence: 'The experimental vaccine was trialed in fifty clinics',
+            translationHint: 'Subject + was + past participle + prepositional phrase'
+          }
+        }
+      },
+      {
+        id: 'pas-fill-3',
+        type: 'fill-blank',
+        title: 'Passive Agent Omission',
+        xpValue: 20,
+        data: {
+          kind: 'fill-blank',
+          data: {
+            sentenceWithBlank: 'The groundbreaking research findings ___ published in a prestigious scientific journal last month.',
+            options: ['were', 'was', 'have been', 'are being'],
+            correctAnswer: 'were',
+            explanation: 'The plural subject "research findings" paired with past time marker "last month" takes the plural past auxiliary "were".'
+          }
+        }
+      },
+      {
+        id: 'pas-match-4',
+        type: 'matching',
+        title: 'Formal Academic Verbs & Definitions',
+        xpValue: 25,
+        data: {
+          kind: 'matching',
+          pairs: [
+            { id: 'ac1', word: 'Substantiate', definition: 'Provide evidence to support truth' },
+            { id: 'ac2', word: 'Delineate', definition: 'Describe or portray precisely' },
+            { id: 'ac3', word: 'Elucidate', definition: 'Make clear or explain in detail' },
+            { id: 'ac4', word: 'Disseminate', definition: 'Spread information widely' }
+          ]
+        }
+      }
+    ]
+  },
+
+  // 6. INVERSION & ELEVATED PROSE (Advanced C1/C2 Grammar)
+  {
+    id: 'lesson-inversion-academic',
+    title: 'Negative Inversion & Stylistic Emphasis',
+    subtitle: 'Command elevated academic prose: "Hardly had I...", "Seldom do we..."',
+    level: 'Advanced',
+    category: 'Grammar',
+    estimatedMinutes: 8,
+    xpTotal: 85,
+    progressPercent: 0,
+    completed: false,
+    unlocked: true,
+    activities: [
+      {
+        id: 'inv-drag-1',
+        type: 'drag-drop',
+        title: 'Construct Negative Inversion',
+        xpValue: 25,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Invert the auxiliary verb after the negative adverb "Rarely":',
+            scrambledWords: ['have', 'Rarely', 'I', 'such', 'witnessed', 'resilience', 'profound'],
+            correctSentence: 'Rarely have I witnessed such profound resilience',
+            translationHint: 'Negative Adverb + Auxiliary + Subject + Main Verb + Object'
+          }
+        }
+      },
+      {
+        id: 'inv-fill-2',
+        type: 'fill-blank',
+        title: 'Seldom Inversion',
+        xpValue: 20,
+        data: {
+          kind: 'fill-blank',
+          data: {
+            sentenceWithBlank: 'Seldom ___ climatologists recorded such elevated ocean temperatures across the North Atlantic.',
+            options: ['have', 'has', 'they have', 'did'],
+            correctAnswer: 'have',
+            explanation: 'After negative adverbs like "seldom", the auxiliary verb "have" precedes the plural subject "climatologists".'
+          }
+        }
+      },
+      {
+        id: 'inv-flash-3',
+        type: 'flashcard',
+        title: 'Inversion Structure Formula',
+        xpValue: 20,
+        data: {
+          kind: 'flashcard',
+          data: {
+            word: 'HARDLY ... WHEN',
+            phonetic: '/ˈhɑːrdli ... wɛn/',
+            accentNote: 'hard-lee ... wen',
+            partOfSpeech: 'correlative conjunction',
+            meaning: 'Used to show that one action happened almost immediately after another past action.',
+            example: 'Hardly had the keynote speaker begun when the projector malfunctioned.',
+            translationHint: 'Hardly + had + S + V3 ... when + S + V2',
+            audioPrompt: 'Hardly had the keynote speaker begun when the projector malfunctioned.'
+          }
+        }
+      },
+      {
+        id: 'inv-listen-4',
+        type: 'listen-arrange',
+        title: 'Listen and Assemble Inversion',
+        xpValue: 20,
+        data: {
+          kind: 'listen-arrange',
+          data: {
+            audioText: 'Not only did they exceed sales quotas, but they also expanded market share.',
+            instruction: 'Listen carefully and assemble the parallel inverted sentence:',
+            words: ['they', 'exceed', 'quotas', 'Not', 'sales', 'only', 'did'],
+            correctSequence: ['Not', 'only', 'did', 'they', 'exceed', 'sales', 'quotas']
+          }
+        }
+      }
+    ]
+  },
+
+  // 7. LISTENING ESSENTIALS (Intermediate Listening)
   {
     id: 'lesson-listening-essentials',
     title: 'Listening Essentials: Fast Speech & Reductions',
@@ -214,9 +588,26 @@ export const SAMPLE_LESSONS: Lesson[] = [
             correctSequence: ['Could', 'you', 'please', 'send', 'me', 'the', 'report', 'by', 'five', 'PM?']
           }
         }
+      },
+      {
+        id: 'listen-3-drag',
+        type: 'drag-drop',
+        title: 'Reductions in Connected Speech',
+        xpValue: 15,
+        data: {
+          kind: 'drag-drop',
+          data: {
+            instruction: 'Assemble the full formal equivalent of the spoken reduction "wanna go":',
+            scrambledWords: ['want', 'to', 'I', 'leave', 'now'],
+            correctSentence: 'I want to leave now',
+            translationHint: '"wanna" = "want to"'
+          }
+        }
       }
     ]
   },
+
+  // 8. ACADEMIC READING: CLIMATE & CITIES (Advanced Reading)
   {
     id: 'lesson-reading-mastery',
     title: 'Academic Reading: Climate & Cities',
@@ -285,6 +676,8 @@ export const SAMPLE_LESSONS: Lesson[] = [
       }
     ]
   },
+
+  // 9. SPEAKING & PRONUNCIATION (Intermediate Speaking)
   {
     id: 'lesson-speaking-fluency',
     title: 'Speaking & Pronunciation: Intonation & Stress',
@@ -316,4 +709,3 @@ export const SAMPLE_LESSONS: Lesson[] = [
     ]
   }
 ];
-

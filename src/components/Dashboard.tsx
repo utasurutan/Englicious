@@ -11,13 +11,15 @@ interface Props {
   lessons: Lesson[];
   onStartLesson: (lesson: Lesson) => void;
   onNavigate: (view: string) => void;
+  onOpenSpeedChallenge?: () => void;
 }
 
 export const Dashboard: React.FC<Props> = ({
   user,
   lessons,
   onStartLesson,
-  onNavigate
+  onNavigate,
+  onOpenSpeedChallenge
 }) => {
   // Dynamic greeting based on user's local time
   const getGreeting = () => {
@@ -238,6 +240,116 @@ export const Dashboard: React.FC<Props> = ({
             <Headphones className="w-3.5 h-3.5" />
             <span>Start 10-min Listening Drill</span>
           </button>
+        </div>
+      </section>
+
+      {/* INTERACTIVE STUDIOS & SPEED DRILL STRIP */}
+      <section className="mb-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Interactive Practice Studios
+          </h2>
+          <span className="text-xs font-bold text-brand-600 cursor-pointer" onClick={() => onNavigate('practice')}>
+            View All Studios →
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Speed Challenge */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              if (onOpenSpeedChallenge) onOpenSpeedChallenge();
+            }}
+            className="p-5 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-soft hover:shadow-soft-lg cursor-pointer transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-3 text-white">
+                <Zap className="w-5 h-5 fill-white" />
+              </div>
+              <span className="text-[10px] uppercase font-bold tracking-wider bg-black/20 px-2 py-0.5 rounded-full inline-block mb-1">
+                60s Mini-Game
+              </span>
+              <h3 className="text-lg font-black leading-tight">Speed Challenge</h3>
+              <p className="text-xs text-amber-100 mt-1">High-tempo vocabulary blitz with combo multipliers.</p>
+            </div>
+            <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/20 text-xs font-bold">
+              <span>Play Now</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* AI Roleplay Speaking */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('practice-roleplay');
+            }}
+            className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-soft-sm hover:shadow-soft hover:border-brand-300 cursor-pointer transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3 border border-purple-100">
+                <Mic className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full inline-block mb-1">
+                Voice Roleplay
+              </span>
+              <h3 className="text-lg font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight">AI Speaking Partner</h3>
+              <p className="text-xs text-slate-500 mt-1">Practice realistic cafe orders, job interviews, and debates.</p>
+            </div>
+            <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100 text-xs font-bold text-brand-600">
+              <span>Start Dialogue</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Writing Lab */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('practice-writing');
+            }}
+            className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-soft-sm hover:shadow-soft hover:border-brand-300 cursor-pointer transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 text-brand-600 flex items-center justify-center mb-3 border border-brand-100">
+                <FileText className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full inline-block mb-1">
+                Essay Evaluator
+              </span>
+              <h3 className="text-lg font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight">IELTS Writing Lab</h3>
+              <p className="text-xs text-slate-500 mt-1">Real-time word density, transition analyzer, and band scoring.</p>
+            </div>
+            <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100 text-xs font-bold text-brand-600">
+              <span>Write Essay</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Vocab SRS Decks */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('practice-srs');
+            }}
+            className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-soft-sm hover:shadow-soft hover:border-brand-300 cursor-pointer transition-all group flex flex-col justify-between"
+          >
+            <div>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 border border-emerald-100">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mb-1">
+                Spaced Repetition
+              </span>
+              <h3 className="text-lg font-black text-slate-900 group-hover:text-brand-600 transition-colors leading-tight">Vocab Mastery Decks</h3>
+              <p className="text-xs text-slate-500 mt-1">Oxford 3000, Academic Word List (AWL), and Business packs.</p>
+            </div>
+            <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100 text-xs font-bold text-brand-600">
+              <span>Review Flashcards</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
         </div>
       </section>
 

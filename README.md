@@ -14,54 +14,56 @@ Built with **React 18**, **TypeScript**, **Tailwind CSS**, and browser-native **
 - **Skills:** Vocabulary, Grammar, Listening, Reading, Speaking, Writing
 - **Standardized Exam Prep:** TOEFL iBT, IELTS Academic & General, TOEIC Listening & Reading
 
-### 2. Interactive Activities Engine (`src/components/activities/`)
-- 🃏 **Flashcards:** 3D flip card, IPA phonetics, audio pronunciation, usage notes, and *Still Learning* vs *Known* tracking.
-- 🧩 **Drag & Drop / Sentence Builder:** Scrambled token ordering (`[ yesterday ] [ school ] [ went ] [ I ] [ to ]` → `"I went to school yesterday"`), touch-friendly slotting and instant feedback.
-- 🔗 **Matching Pairs:** Word-to-definition interactive connector with instant confirmation and streak feedback.
-- ✏️ **Fill in the Blank:** Grammatical slotting with instant explanations and speech synthesis.
-- 🎧 **Listening Player with Waveform:** Dynamic audio visualizer, speed controls (0.75x, 1.0x, 1.25x), replay controls, and speech synthesis playback.
-- 🔀 **Listen & Arrange:** Audio clip playback with tokenized word sequence assembly.
-- 📖 **Distraction-Free Reading:** Clickable interactive vocabulary words with popover definitions, IPA phonetics, audio pronunciation, and a sentence highlighter tool.
-- 🎙️ **Speaking Practice:** Native reference audio, microphone recording simulation, and pronunciation fluency scoring.
+### 2. Dedicated Practice Studios
+- ✍️ **Writing Lab & Essay Evaluator (`WritingLab.tsx`):**
+  - Prompt bank for IELTS Writing Task 1, IELTS Task 2, and TOEFL Academic Discussion.
+  - Real-time word counter, character counter, and time tracking.
+  - Automated rubric diagnostic: Lexical Resource (Academic Word List), Coherence & Cohesion (discourse transitions), and Grammatical Range with estimated Band Score (Band 5.5 to 8.5).
+  - Band 9.0 sample model answers with 1-click clipboard copy.
+- 🗣️ **AI Roleplay Speaking Partner (`SpeakingRoleplay.tsx`):**
+  - Interactive turn-based dialogue with native audio playback across scenarios:
+    - *Ordering at a London Coffee Shop* (A2–B1)
+    - *Tech Job Interview with Talent Partner* (B2)
+    - *IELTS Speaking Part 3: University Academic Debate* (C1)
+  - Speech Recognition via Web Speech API and text fallback with native phrasing tips.
+- 🗂️ **Vocab Mastery & Spaced Repetition (`VocabSRSDeck.tsx`):**
+  - Leitner Box SRS (Box 1: New, Box 2: Learning, Box 3: Review, Box 4: Mastered).
+  - Thematic Decks: *Academic Word List (AWL)*, *Oxford 3000 Core*, *Business & Corporate*, *Phrasal Verbs & Idioms*.
+  - 3D card flip with IPA phonetics, audio pronunciation, collocations, and recall rating buttons (`Again`, `Hard`, `Good`, `Easy`).
+- 🎧 **Listening Lab & Dictation Studio (`ListeningLab.tsx`):**
+  - Audio waveform visualizer, speed controls (0.75x, 1.0x, 1.25x), and live dictation transcription scoring.
+- 📖 **Academic Reading Studio (`ReadingLab.tsx`):**
+  - Distraction-free typography with font-size controls, theme contrast modes (Clean, Warm Sepia, Soft Dark), interactive vocabulary drawer, and sentence highlighter.
 
-### 3. Exam Preparation Simulator (`src/components/ExamPrep.tsx`)
-- Dedicated sections for **IELTS**, **TOEFL**, and **TOEIC** with scoring guidelines, section breakdowns, and test strategies.
-- **Realistic Mock Exam Environment:**
-  - Countdown exam timer (with pause/resume)
-  - Question Navigator Drawer (Answered, Unanswered, Marked for Review)
-  - Flag for review toggle
-  - Previous / Next controls
-  - Split-screen reading passages and audio prompts
-- **Post-Test Diagnostic Report:**
-  - Scaled scores (e.g. IELTS Band 8.0, TOEFL 104/120, TOEIC 880/990)
-  - Accuracy % and time breakdown
-  - Identified **Strong Areas** & **Weak Areas**
-  - Tailored recommended lessons
+### 3. Gamification, Quizzes & Interactive Exercises
+- ⚡ **60-Second Speed Drill Mini-Game (`SpeedChallenge.tsx`):**
+  - Rapid-fire blitz with vocabulary synonyms, prepositions, word forms, and inversion structures.
+  - Combo multiplier system ($1\times \rightarrow 2\times \rightarrow 3\times \rightarrow 4\times$) and high score ranking.
+- 🏆 **Weekly League Leaderboard (`LeaderboardModal.tsx`):**
+  - Tiered leagues: Bronze, Silver, Gold, Ruby, Diamond League with promotion/relegation zones.
+- 📅 **Habit Tracker & Activity Heatmap (`ActivityHeatmap.tsx`):**
+  - GitHub-style 12-week contribution matrix tracking daily study minutes and active streaks.
+- 🎓 **Verified Certificate of Competency (`CertificateModal.tsx`):**
+  - Formal digital certificate with learner name, CEFR level, verification code, and print/PDF support.
+- 🧩 **Interactive Quiz Types (`src/components/activities/`):**
+  - **Category Sort & Drag (`CategorizeDragDrop.tsx`):** Sort formal vs informal registers, phrasal verb particles, or verb tenses.
+  - **Drag & Drop Sentence Builder (`DragDropActivity.tsx`):** Reorder words, conditional clauses, and negative inversions.
+  - **Word & Meaning Matching (`MatchingActivity.tsx`):** Interactive pair connection with instant validation.
+  - **Fill in the Blank (`FillBlankActivity.tsx`):** Grammatical context slots with audio and explanations.
+  - **Flashcards 3D (`FlashcardActivity.tsx`):** Phonetics, accent notes, and example sentences.
+  - **Listen & Arrange (`ListenArrangeActivity.tsx`):** Speech transcription sequencing.
+  - **Comprehension Reading (`ReadingActivity.tsx`):** Interactive clickable vocabulary and text highlighter.
 
-### 4. Personalized Dashboard & Progress (`src/components/Dashboard.tsx` & `ProgressDashboard.tsx`)
-- Dynamic greeting based on user time of day (`Good evening, Sultan 👋`)
-- Current CEFR level, Daily Goal, Total XP, and Streak
-- **Continue Learning** hero card (e.g., *Intermediate Grammar: Simple Past Tense 72%*)
-- **Your Weak Areas** smart insight card with instant 1-click drill launch
-- **Recommended for You** flexible horizontal course list
-- CEFR A1 → C2 milestone bar, 6-skill breakdown metrics, 7-day weekly activity chart, and unlocked achievement badges.
+### 4. Standardized Exam Preparation Simulator (`ExamPrep.tsx`)
+- Comprehensive modules for **IELTS**, **TOEFL iBT**, and **TOEIC**.
+- Countdown timer, question navigator drawer, *Mark for Review* flags, and diagnostic report with scaled scores and strong/weak area diagnostics.
 
-### 5. Onboarding & Placement Flow (`src/components/OnboardingModal.tsx`)
-- 3-step personalization (Level, Goal, Skill Focus)
-- Optional 3-question adaptive Placement Test
-- Instant assessment result: *"Your estimated level is B1 — Intermediate"* and custom learning roadmap.
-
-### 6. Zero External Asset Sound System (`src/utils/sound.ts`)
+### 5. Zero External Asset Sound System (`src/utils/sound.ts`)
 - Pure browser **Web Audio API** synthesizer generating harmonic success chimes, gentle error bumps, XP dings, and triumphant completion fanfares.
-- Sound effect toggle in top navigation.
 
 ---
 
 ## 🚀 Getting Started
-
-### Prerequisites
-- Node.js (v18+)
-- npm or pnpm
 
 ### Development Server
 ```bash
@@ -74,4 +76,3 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 npm run preview
 ```
-

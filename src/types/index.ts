@@ -46,6 +46,7 @@ export interface UserProfile {
 export type ActivityType = 
   | 'flashcard'
   | 'drag-drop'
+  | 'categorize'
   | 'matching'
   | 'fill-blank'
   | 'multiple-choice'
@@ -138,6 +139,13 @@ export interface SpeakingData {
   tips: string;
 }
 
+export interface CategorizeActivityData {
+  instruction: string;
+  category1: string;
+  category2: string;
+  items: Array<{ id: string; text: string; targetCategory: string }>;
+}
+
 export interface LessonActivity {
   id: string;
   type: ActivityType;
@@ -146,6 +154,7 @@ export interface LessonActivity {
   data: 
     | { kind: 'flashcard'; data: FlashcardData }
     | { kind: 'drag-drop'; data: DragDropData }
+    | { kind: 'categorize'; data: CategorizeActivityData }
     | { kind: 'matching'; pairs: MatchingPair[] }
     | { kind: 'fill-blank'; data: FillBlankData }
     | { kind: 'multiple-choice'; data: MultipleChoiceData }

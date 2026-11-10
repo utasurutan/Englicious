@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Zap, Volume2, VolumeX, Sparkles, BookOpen, Layers, Award, BarChart3, Home } from 'lucide-react';
+import { Flame, Zap, Volume2, VolumeX, Sparkles, BookOpen, Layers, Award, BarChart3, Home, Trophy } from 'lucide-react';
 import { UserProfile } from '../types';
 import { sounds } from '../utils/sound';
 
@@ -9,6 +9,7 @@ interface Props {
   user: UserProfile;
   soundEnabled: boolean;
   onToggleSound: () => void;
+  onOpenLeaderboard?: () => void;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -16,7 +17,8 @@ export const Navbar: React.FC<Props> = ({
   onNavigate,
   user,
   soundEnabled,
-  onToggleSound
+  onToggleSound,
+  onOpenLeaderboard
 }) => {
   const navItems = [
     { id: 'landing', label: 'Home', icon: Home },
@@ -92,6 +94,21 @@ export const Navbar: React.FC<Props> = ({
               <VolumeX className="w-4 h-4 text-slate-400" />
             )}
           </button>
+
+          {/* Trophy Leaderboard Button */}
+          {onOpenLeaderboard && (
+            <button
+              onClick={() => {
+                sounds.playClick();
+                onOpenLeaderboard();
+              }}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200/80 text-xs font-bold hover:bg-amber-100 transition-colors shadow-soft-sm"
+              title="View Weekly League Leaderboard"
+            >
+              <Trophy className="w-4 h-4 text-amber-600" />
+              <span className="hidden sm:inline">League</span>
+            </button>
+          )}
 
           {/* Streak Indicator */}
           <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200/80 text-xs font-bold shadow-soft-sm">

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Flame, Zap, Award, Target, TrendingUp, CheckCircle2, 
   BookOpen, Headphones, FileText, Mic, Sparkles, ArrowRight, Clock 
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { sounds } from '../utils/sound';
+import { ActivityHeatmap } from './ActivityHeatmap';
+import { CertificateModal } from './CertificateModal';
 
 interface Props {
   user: UserProfile;
@@ -12,6 +14,7 @@ interface Props {
 }
 
 export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLesson }) => {
+  const [showCertificate, setShowCertificate] = useState(false);
   // Skill breakdown percentages
   const skillsBreakdown = [
     { name: 'Vocabulary', score: 86, color: 'bg-emerald-500', note: '+12% this week' },
@@ -44,16 +47,29 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
       {/* Top Header */}
-      <div className="mb-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">
-          Learning Analytics
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2 mb-2">
-          Your Progress & Mastery Dashboard
-        </h1>
-        <p className="text-sm text-slate-500">
-          Comprehensive evaluation of your CEFR progression, weekly study frequency, and skill breakdown.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">
+            Learning Analytics
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2 mb-2">
+            Your Progress & Mastery Dashboard
+          </h1>
+          <p className="text-sm text-slate-500">
+            Comprehensive evaluation of your CEFR progression, weekly study frequency, and skill breakdown.
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            sounds.playClick();
+            setShowCertificate(true);
+          }}
+          className="self-start sm:self-auto px-5 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-all flex items-center gap-2 active:scale-95"
+        >
+          <Award className="w-4 h-4" />
+          <span>View Verified Certificate</span>
+        </button>
       </div>
 
       {/* 5 Core Metrics */}
@@ -232,6 +248,11 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
         </button>
       </div>
 
+      {/* ACTIVITY HABIT HEATMAP */}
+      <div className="mb-8">
+        <ActivityHeatmap streak={user.streak} />
+      </div>
+
       {/* ACHIEVEMENTS & BADGES */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
@@ -266,6 +287,15 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
           })}
         </div>
       </div>
+
+      {/* Certificate Modal */}
+      <CertificateModal
+        isOpen={showCertificate}
+        onClose={() => setShowCertificate(false)}
+        userName={user.name}
+        level={user.level}
+        cefr={user.cefr}
+      />
     </div>
   );
 };
