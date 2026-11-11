@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Flame, Zap, Award, Target, TrendingUp, CheckCircle2, 
-  BookOpen, Headphones, FileText, Mic, Sparkles, ArrowRight, Clock 
+  BookOpen, Headphones, FileText, Mic, Sparkles, ArrowRight, Clock, Trophy 
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { sounds } from '../utils/sound';
@@ -11,9 +11,14 @@ import { CertificateModal } from './CertificateModal';
 interface Props {
   user: UserProfile;
   onSelectRecommendedLesson: (lessonId: string) => void;
+  onOpenLeaderboard?: () => void;
 }
 
-export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLesson }) => {
+export const ProgressDashboard: React.FC<Props> = ({ 
+  user, 
+  onSelectRecommendedLesson,
+  onOpenLeaderboard 
+}) => {
   const [showCertificate, setShowCertificate] = useState(false);
   // Skill breakdown percentages
   const skillsBreakdown = [
@@ -60,27 +65,43 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            sounds.playClick();
-            setShowCertificate(true);
-          }}
-          className="self-start sm:self-auto px-5 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-all flex items-center gap-2 active:scale-95"
-        >
-          <Award className="w-4 h-4" />
-          <span>View Verified Certificate</span>
-        </button>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          {onOpenLeaderboard && (
+            <button
+              onClick={() => {
+                sounds.playClick();
+                onOpenLeaderboard();
+              }}
+              className="px-4 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 font-bold text-xs shadow-soft-sm transition-all flex items-center gap-2 active:scale-95"
+              title="Open Weekly League Leaderboard"
+            >
+              <Trophy className="w-4 h-4 text-amber-600" />
+              <span>Weekly League (Rank #4)</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              sounds.playClick();
+              setShowCertificate(true);
+            }}
+            className="px-5 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-all flex items-center gap-2 active:scale-95"
+          >
+            <Award className="w-4 h-4" />
+            <span>View Verified Certificate</span>
+          </button>
+        </div>
       </div>
 
-      {/* 5 Core Metrics */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4 mb-8">
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
+      {/* 6 Core Metrics Including Weekly League */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
           <p className="text-xs font-bold uppercase text-slate-400 mb-1">CEFR Level</p>
           <p className="text-2xl font-black text-slate-900">{user.cefr}</p>
           <p className="text-[10px] text-brand-600 font-semibold">{user.level}</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
           <p className="text-xs font-bold uppercase text-slate-400 mb-1">Total XP</p>
           <div className="flex items-center gap-1">
             <Zap className="w-5 h-5 text-brand-600 fill-brand-600" />
@@ -89,7 +110,7 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
           <p className="text-[10px] text-mint-600 font-semibold">+180 this week</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
           <p className="text-xs font-bold uppercase text-slate-400 mb-1">Daily Streak</p>
           <div className="flex items-center gap-1">
             <Flame className="w-5 h-5 text-amber-500 fill-amber-500" />
@@ -98,13 +119,28 @@ export const ProgressDashboard: React.FC<Props> = ({ user, onSelectRecommendedLe
           <p className="text-[10px] text-amber-600 font-semibold">Keep it alive!</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
+        <div 
+          onClick={onOpenLeaderboard ? () => { sounds.playClick(); onOpenLeaderboard(); } : undefined}
+          className={`p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/80 shadow-soft-sm ${
+            onOpenLeaderboard ? 'cursor-pointer hover:bg-amber-100/70 transition-colors' : ''
+          }`}
+          title="Click to view full League Leaderboard"
+        >
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs font-bold uppercase text-amber-700">Weekly League</p>
+            <Trophy className="w-3.5 h-3.5 text-amber-600" />
+          </div>
+          <p className="text-2xl font-black text-amber-950">#4</p>
+          <p className="text-[10px] text-amber-800 font-semibold">Bronze League (Top 5)</p>
+        </div>
+
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
           <p className="text-xs font-bold uppercase text-slate-400 mb-1">Lessons Done</p>
           <p className="text-2xl font-black text-slate-900">{user.completedLessonsCount}</p>
           <p className="text-[10px] text-slate-400 font-semibold">Across all levels</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm col-span-2 sm:col-span-1">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm">
           <p className="text-xs font-bold uppercase text-slate-400 mb-1">Accuracy</p>
           <p className="text-2xl font-black text-mint-600">{user.accuracy}%</p>
           <p className="text-[10px] text-slate-400 font-semibold">Drills & Mocks</p>

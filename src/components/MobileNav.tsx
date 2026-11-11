@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, BookOpen, Layers, Award, BarChart3 } from 'lucide-react';
+import { Home, BookOpen, Layers, BarChart3 } from 'lucide-react';
 import { sounds } from '../utils/sound';
 
 interface Props {
@@ -12,7 +12,6 @@ export const MobileNav: React.FC<Props> = ({ currentView, onNavigate }) => {
     { id: 'dashboard', label: 'Home', icon: Home },
     { id: 'learn', label: 'Learn', icon: BookOpen },
     { id: 'practice', label: 'Practice', icon: Layers },
-    { id: 'exam-prep', label: 'Exam Prep', icon: Award },
     { id: 'progress', label: 'Progress', icon: BarChart3 },
   ];
 
@@ -23,9 +22,11 @@ export const MobileNav: React.FC<Props> = ({ currentView, onNavigate }) => {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 pb-safe shadow-soft-lg">
-      <div className="grid grid-cols-5 h-16">
+      <div className="grid grid-cols-4 h-16">
         {tabs.map((tab) => {
-          const isActive = currentView === tab.id;
+          const isActive = tab.id === 'practice' 
+            ? currentView === 'practice' || currentView === 'exam-prep'
+            : currentView === tab.id;
           const Icon = tab.icon;
 
           return (
@@ -50,4 +51,3 @@ export const MobileNav: React.FC<Props> = ({ currentView, onNavigate }) => {
     </nav>
   );
 };
-

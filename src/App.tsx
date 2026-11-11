@@ -15,6 +15,7 @@ import { SpeakingRoleplay } from './components/SpeakingRoleplay';
 import { VocabSRSDeck } from './components/VocabSRSDeck';
 import { SpeedChallenge } from './components/SpeedChallenge';
 import { LeaderboardModal } from './components/LeaderboardModal';
+import { CertificateModal } from './components/CertificateModal';
 import { ProgressDashboard } from './components/ProgressDashboard';
 import { OnboardingModal } from './components/OnboardingModal';
 import { sounds } from './utils/sound';
@@ -23,12 +24,13 @@ import { SpeechService } from './utils/speech';
 export const App: React.FC = () => {
   // Current view state
   const [currentView, setCurrentView] = useState<string>('landing');
-  const [practiceTab, setPracticeTab] = useState<'listening' | 'reading' | 'writing' | 'roleplay' | 'srs' | 'speed'>('listening');
+  const [practiceTab, setPracticeTab] = useState<'listening' | 'reading' | 'writing' | 'roleplay' | 'srs' | 'exam-prep'>('listening');
 
   // Modals state
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isSpeedChallengeOpen, setIsSpeedChallengeOpen] = useState(false);
 
   // Sound cues state
@@ -150,6 +152,9 @@ export const App: React.FC = () => {
     } else if (view === 'practice-srs') {
       setCurrentView('practice');
       setPracticeTab('srs');
+    } else if (view === 'exam-prep') {
+      setCurrentView('practice');
+      setPracticeTab('exam-prep');
     } else {
       setCurrentView(view);
     }
@@ -172,6 +177,8 @@ export const App: React.FC = () => {
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
         onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
+        onOpenCertificate={() => setIsCertificateOpen(true)}
+        onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
       />
 
       {/* Main Routed View Content */}
@@ -264,6 +271,17 @@ export const App: React.FC = () => {
                 <button
                   onClick={() => {
                     sounds.playClick();
+                    setPracticeTab('exam-prep');
+                  }}
+                  className={`px-3 sm:px-4 py-2 rounded-xl transition-all ${
+                    practiceTab === 'exam-prep' ? 'bg-white text-brand-600 shadow-soft-sm' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  🎓 Exam Prep (TOEFL / IELTS)
+                </button>
+                <button
+                  onClick={() => {
+                    sounds.playClick();
                     setIsSpeedChallengeOpen(true);
                   }}
                   className="px-3 sm:px-4 py-2 rounded-xl transition-all text-amber-700 hover:bg-amber-100/50 flex items-center gap-1"
@@ -279,6 +297,12 @@ export const App: React.FC = () => {
             {practiceTab === 'writing' && <WritingLab />}
             {practiceTab === 'roleplay' && <SpeakingRoleplay />}
             {practiceTab === 'srs' && <VocabSRSDeck />}
+            {practiceTab === 'exam-prep' && (
+              <ExamPrep
+                onBackToDashboard={() => setCurrentView('dashboard')}
+                onSelectRecommendedLesson={handleSelectRecommendedLesson}
+              />
+            )}
           </div>
         )}
 
@@ -293,6 +317,7 @@ export const App: React.FC = () => {
           <ProgressDashboard
             user={user}
             onSelectRecommendedLesson={handleSelectRecommendedLesson}
+            onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
           />
         )}
       </div>
@@ -324,6 +349,15 @@ export const App: React.FC = () => {
         isOpen={isLeaderboardOpen}
         onClose={() => setIsLeaderboardOpen(false)}
         currentUserXp={user.xp}
+      />
+
+      {/* Verified Certificate Modal */}
+      <CertificateModal
+        isOpen={isCertificateOpen}
+        onClose={() => setIsCertificateOpen(false)}
+        userName={user.name}
+        level={user.level}
+        cefr={user.cefr}
       />
 
       {/* 60s Speed Drill Modal */}
