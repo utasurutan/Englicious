@@ -146,6 +146,46 @@ export interface CategorizeActivityData {
   items: Array<{ id: string; text: string; targetCategory: string }>;
 }
 
+export type VisualObjectId = 
+  | 'apple' 
+  | 'coffee' 
+  | 'airplane' 
+  | 'headphones' 
+  | 'backpack' 
+  | 'car' 
+  | 'clock' 
+  | 'bicycle' 
+  | 'books' 
+  | 'house';
+
+export interface VisualObjectData {
+  objectId: VisualObjectId;
+  objectName: string;
+  category: string;
+  phonetic: string;
+  indonesianMeaning: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  exampleSentence: string;
+  funFact?: string;
+  hint?: string;
+}
+
+export interface LessonTheoryRule {
+  title: string;
+  explanation: string;
+  example: string;
+  formula?: string;
+}
+
+export interface LessonTheoryGuide {
+  summary: string;
+  rules: LessonTheoryRule[];
+  keyFormulas?: string[];
+  teacherTip?: string;
+}
+
 export interface LessonActivity {
   id: string;
   type: ActivityType;
@@ -161,7 +201,8 @@ export interface LessonActivity {
     | { kind: 'listening'; data: ListeningData }
     | { kind: 'listen-arrange'; data: ListenArrangeData }
     | { kind: 'reading'; data: ReadingData }
-    | { kind: 'speaking'; data: SpeakingData };
+    | { kind: 'speaking'; data: SpeakingData }
+    | { kind: 'visual-object'; data: VisualObjectData };
 }
 
 export interface Lesson {
@@ -176,6 +217,36 @@ export interface Lesson {
   progressPercent: number;
   completed: boolean;
   unlocked: boolean;
+  theoryGuide?: LessonTheoryGuide;
+}
+
+export interface LearningMaterialSection {
+  heading: string;
+  content: string;
+  formula?: string;
+  examples?: Array<{ en: string; id: string; audioPhrase?: string }>;
+  teacherTip?: string;
+  warning?: string;
+}
+
+export interface LearningMaterial {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: 'Grammar' | 'Vocabulary' | 'Pronunciation' | 'Writing' | 'Speaking' | 'Exam Prep';
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  readingTimeMinutes: number;
+  iconName: string;
+  tags: string[];
+  summary: string;
+  sections: LearningMaterialSection[];
+  quickCheck?: {
+    question: string;
+    options: string[];
+    correctIndex: number;
+    explanation: string;
+  };
+  relatedLessonId?: string;
 }
 
 export interface ExamQuestion {
