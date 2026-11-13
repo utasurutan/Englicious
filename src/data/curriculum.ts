@@ -46,14 +46,14 @@ export const CURRICULA: Record<'Beginner' | 'Intermediate' | 'Advanced', LevelCu
       },
       {
         id: 'node-b2',
-        lessonId: 'lesson-vocab-foundations',
-        title: 'Everyday Vocabulary',
+        lessonId: 'lesson-visual-objects',
+        title: '3D Visual Objects Vocabulary',
         category: 'Vocabulary',
         level: 'Beginner',
         status: 'completed',
         progress: 100,
-        xpReward: 70,
-        description: 'Common foods, home items, family terms, and time expressions.',
+        xpReward: 90,
+        description: 'Identify real-world 3D objects with audio, phonetic guides, and example sentences.',
         iconName: 'Sparkles'
       },
       {

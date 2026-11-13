@@ -13,7 +13,51 @@ export const SAMPLE_LESSONS: Lesson[] = [
     progressPercent: 72,
     completed: false,
     unlocked: true,
+    theoryGuide: {
+      summary: 'Simple Past Tense digunakan untuk menyatakan kejadian yang telah selesai di masa lampau pada waktu spesifik (yesterday, last week, ago).',
+      keyFormulas: [
+        '(+) Subject + Verb 2 (Past Form) + Object',
+        '(-) Subject + did not (didn\'t) + Verb 1 + Object',
+        '(?) Did + Subject + Verb 1 + Object?'
+      ],
+      rules: [
+        {
+          title: 'Regular vs Irregular Verbs',
+          explanation: 'Sebagian besar kata kerja beraturan berakhiran -ed (work ➔ worked, bake ➔ baked). Namun kata kerja tidak beraturan berubah total (go ➔ went, buy ➔ bought).',
+          example: 'She baked a delicious chocolate cake yesterday.'
+        },
+        {
+          title: 'Bentuk Negatif dan Tanya Kembali ke Verb 1',
+          explanation: 'Saat menggunakan auxiliary "did" atau "didn\'t", kata kerja utama SELALU kembali ke bentuk dasar (Verb 1).',
+          formula: 'Did you go? (BUKAN: Did you went?)',
+          example: 'I did not see the airplane in the sky.'
+        }
+      ],
+      teacherTip: 'Jangan pernah menggabungkan "did" dengan Verb 2. Contoh salah: "I didn\'t knew" ❌. Yang benar: "I didn\'t know" ✔️.'
+    },
     activities: [
+      {
+        id: 'act-past-3d-object',
+        type: 'multiple-choice',
+        title: '3D Object Vocabulary in Past Tense',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'coffee',
+            objectName: 'Coffee Mug',
+            category: 'Daily Objects & Routine',
+            phonetic: '/ˈkɒf.i mʌɡ/',
+            indonesianMeaning: 'Cangkir Kopi',
+            question: 'Look at this 3D object: What did Sultan drink from yesterday morning?',
+            options: ['Coffee Mug', 'Water Bottle', 'Soup Bowl', 'Wine Glass'],
+            correctAnswer: 'Coffee Mug',
+            exampleSentence: 'Sultan drank hot espresso from his favorite coffee mug yesterday morning.',
+            funFact: 'Coffee is the second most traded commodity on Earth after crude oil!',
+            hint: 'A ceramic container with a handle used for drinking hot beverages like cappuccino or latte.'
+          }
+        }
+      },
       {
         id: 'act-1-flashcard',
         type: 'flashcard',
@@ -703,6 +747,171 @@ export const SAMPLE_LESSONS: Lesson[] = [
             sampleAudioText: 'I never said she stole my money.',
             keyPhrases: ['never said', 'stole my money'],
             tips: 'Notice how shifting the stress onto "never" or "she" completely alters the implicit meaning of the sentence.'
+          }
+        }
+      }
+    ]
+  },
+
+  // 10. VISUAL 3D OBJECT VOCABULARY MASTERY
+  {
+    id: 'lesson-visual-objects',
+    title: 'Visual 3D Vocabulary & Object Mastery',
+    subtitle: 'Learn and identify real-world 3D objects with audio and phonetic guides',
+    level: 'Beginner',
+    category: 'Vocabulary',
+    estimatedMinutes: 8,
+    xpTotal: 90,
+    progressPercent: 0,
+    completed: false,
+    unlocked: true,
+    theoryGuide: {
+      summary: 'Mengasosiasikan kata bahasa Inggris langsung dengan bentuk objek visual (tanpa menerjemahkan dalam hati terlebih dahulu) adalah metode tercepat membangun kefasihan alami.',
+      rules: [
+        {
+          title: 'Direct Association (Metode Asosiasi Langsung)',
+          explanation: 'Alih-alih mengingat: "Apple ➔ Apel ➔ Buah merah", langsung lihat bentuk 3D apel dan sebutkan "Apple" / "An apple".',
+          example: 'I see a red apple on the table.'
+        },
+        {
+          title: 'Gunakan Artikel "a" dan "an" dengan Benar',
+          explanation: 'Gunakan "an" di depan kata yang berbunyi huruf vokal (a, i, u, e, o), dan "a" di depan konsonan.',
+          formula: 'an apple, an airplane | a coffee mug, a backpack, a car',
+          example: 'She packed a backpack and an apple for the flight.'
+        }
+      ],
+      teacherTip: 'Perhatikan pengucapan simbol fonetik. Klik tombol audio untuk mendengarkan pelafalan penutur asli!'
+    },
+    activities: [
+      {
+        id: 'vis-act-1',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 1',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'apple',
+            objectName: 'Apple',
+            category: 'Food & Fruits',
+            phonetic: '/ˈæp.əl/',
+            indonesianMeaning: 'Apel',
+            question: 'Look at the 3D object above: What is this fruit called in English?',
+            options: ['Apple', 'Orange', 'Pomegranate', 'Pear'],
+            correctAnswer: 'Apple',
+            exampleSentence: 'An apple is a sweet, crisp fruit. "An apple a day keeps the doctor away."',
+            funFact: 'Apples float in water because 25% of their volume is air!',
+            hint: 'A round fruit with red skin and a small green leaf on top.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-2',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 2',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'coffee',
+            objectName: 'Coffee Mug',
+            category: 'Daily Objects & Beverages',
+            phonetic: '/ˈkɒf.i mʌɡ/',
+            indonesianMeaning: 'Cangkir Kopi',
+            question: 'Look at the steaming 3D container: What is this called in English?',
+            options: ['Water Bottle', 'Coffee Mug', 'Teapot', 'Soup Bowl'],
+            correctAnswer: 'Coffee Mug',
+            exampleSentence: 'She poured hot freshly brewed latte into her ceramic coffee mug.',
+            funFact: 'Over 2.25 billion cups of coffee are enjoyed around the world every single day!',
+            hint: 'A cup with a side handle that holds hot beverages with rising steam.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-3',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 3',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'airplane',
+            objectName: 'Airplane',
+            category: 'Travel & Transportation',
+            phonetic: '/ˈeə.pleɪn/',
+            indonesianMeaning: 'Pesawat Terbang',
+            question: 'Look at the flying 3D vehicle: What is this called in English?',
+            options: ['Helicopter', 'Airplane', 'Cruise Ship', 'Bullet Train'],
+            correctAnswer: 'Airplane',
+            exampleSentence: 'We boarded the international airplane at Heathrow Airport for our holiday.',
+            funFact: 'Commercial passenger airplanes typically cruise at an altitude of 35,000 feet!',
+            hint: 'A winged flying aircraft with jet engines and passenger cabin windows.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-4',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 4',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'headphones',
+            objectName: 'Headphones',
+            category: 'Electronics & Audio',
+            phonetic: '/ˈhɛd.foʊnz/',
+            indonesianMeaning: 'Headphone / Earphone',
+            question: 'Look at the 3D audio gadget: What is this called in English?',
+            options: ['Microphone', 'Smart Watch', 'Headphones', 'Speaker Box'],
+            correctAnswer: 'Headphones',
+            exampleSentence: 'He put on his noise-cancelling headphones to listen to the English podcast.',
+            funFact: 'Headphones were originally invented in 1910 for naval communication!',
+            hint: 'An over-ear audio accessory with two padded speakers joined by a headband.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-5',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 5',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'backpack',
+            objectName: 'Backpack',
+            category: 'School & Travel Essentials',
+            phonetic: '/ˈbæk.pæk/',
+            indonesianMeaning: 'Ransel / Tas Punggung',
+            question: 'Look at this travel bag: What is this called in English?',
+            options: ['Handbag', 'Briefcase', 'Backpack', 'Suitcase'],
+            correctAnswer: 'Backpack',
+            exampleSentence: 'She packed her English notebook and pencils inside her green backpack.',
+            funFact: 'The word "backpack" was coined in the United States in the 1910s.',
+            hint: 'A sturdy bag with shoulder straps carried on your back, commonly used for school or hiking.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-6',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 6',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'clock',
+            objectName: 'Alarm Clock',
+            category: 'Daily Living & Time',
+            phonetic: '/əˈlɑːm klɒk/',
+            indonesianMeaning: 'Jam Beker / Jam Alarm',
+            question: 'Look at this 3D time device: What is this called in English?',
+            options: ['Thermometer', 'Alarm Clock', 'Hourglass', 'Calendar'],
+            correctAnswer: 'Alarm Clock',
+            exampleSentence: 'My alarm clock rings loudly at six o\'clock every weekday morning.',
+            funFact: 'The first mechanical alarm clock was invented in 1787 and could only ring at 4 AM!',
+            hint: 'A circular device with bells on top that makes a sound to wake you up.'
           }
         }
       }

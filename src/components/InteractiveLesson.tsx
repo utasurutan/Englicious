@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Flame, Zap, Trophy, ArrowRight, RotateCcw } from 'lucide-react';
+import { X, Flame, Zap, Trophy, ArrowRight, RotateCcw, BookOpen, Sparkles, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Lesson } from '../types';
 import { FlashcardActivity } from './activities/FlashcardActivity';
@@ -11,6 +11,7 @@ import { ListeningActivity } from './activities/ListeningActivity';
 import { ListenArrangeActivity } from './activities/ListenArrangeActivity';
 import { ReadingActivity } from './activities/ReadingActivity';
 import { SpeakingActivity } from './activities/SpeakingActivity';
+import { VisualObjectActivity } from './activities/VisualObjectActivity';
 import { sounds } from '../utils/sound';
 
 interface Props {
@@ -23,6 +24,7 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
   const [currentIdx, setCurrentIdx] = useState(0);
   const [earnedXp, setEarnedXp] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [showTheoryModal, setShowTheoryModal] = useState(false);
 
   const activities = lesson.activities;
   const currentActivity = activities[currentIdx];
@@ -83,8 +85,17 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
           </div>
         </div>
 
-        {/* Right: Gamification Badges */}
-        <div className="flex items-center gap-3">
+        {/* Right: Gamification Badges & Concept Guide */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => { sounds.playClick(); setShowTheoryModal(true); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold transition-colors shadow-soft-sm"
+            title="Buka panduan materi & rumus pelajaran ini"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="hidden sm:inline">Materi Pelajaran</span>
+          </button>
+
           <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80 text-xs font-bold">
             <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             <span>5 Streak</span>
@@ -100,6 +111,12 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         {!isFinished ? (
           <div className="w-full max-w-4xl mx-auto">
+            {currentActivity.data.kind === 'visual-object' && (
+              <VisualObjectActivity
+                data={currentActivity.data.data}
+                onComplete={() => handleNextActivity(currentActivity.xpValue)}
+              />
+            )}
             {currentActivity.data.kind === 'flashcard' && (
               <FlashcardActivity
                 data={currentActivity.data.data}
@@ -213,6 +230,112 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
           </div>
         )}
       </main>
+
+      {/* Theory & Concept Guide Modal */}
+      {showTheoryModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-3xl shadow-soft-xl border border-slate-200 flex flex-col overflow-hidden animate-pop-in">
+            {/* Modal Header */}
+            <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900">
+                    Panduan Materi: {lesson.title}
+                  </h3>
+                  <p className="text-xs text-slate-400">{lesson.subtitle} • Level {lesson.level}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTheoryModal(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div className="p-6 overflow-y-auto space-y-5 text-sm text-slate-700">
+              {lesson.theoryGuide ? (
+                <>
+                  <div className="p-4 rounded-2xl bg-brand-50/70 border border-brand-200">
+                    <p className="font-extrabold text-brand-900 text-xs uppercase tracking-wider mb-1">
+                      Ringkasan Konsep:
+                    </p>
+                    <p className="text-brand-950 leading-relaxed text-xs sm:text-sm">
+                      {lesson.theoryGuide.summary}
+                    </p>
+                  </div>
+
+                  {lesson.theoryGuide.keyFormulas && lesson.theoryGuide.keyFormulas.length > 0 && (
+                    <div className="p-4 rounded-2xl bg-slate-900 text-white font-mono text-xs">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-sans">
+                        📐 Rumus & Pola Kalimat:
+                      </p>
+                      {lesson.theoryGuide.keyFormulas.map((f, i) => (
+                        <p key={i} className="mb-1 text-mint-400 font-bold">{f}</p>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      Aturan & Contoh Penggunaan:
+                    </p>
+                    {lesson.theoryGuide.rules.map((r, i) => (
+                      <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                        <p className="font-extrabold text-slate-900 mb-1">{r.title}</p>
+                        <p className="text-xs text-slate-600 mb-2 leading-relaxed">{r.explanation}</p>
+                        {r.formula && (
+                          <div className="p-2 rounded-lg bg-white border border-slate-200 font-mono text-xs text-brand-700 font-bold mb-2">
+                            {r.formula}
+                          </div>
+                        )}
+                        <p className="text-xs font-semibold text-slate-800 bg-white p-2.5 rounded-xl border border-slate-200/80">
+                          Contoh: <span className="text-brand-600">{r.example}</span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {lesson.theoryGuide.teacherTip && (
+                    <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950 text-xs flex items-start gap-2.5">
+                      <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold text-amber-900 mb-0.5">Tips Guru:</p>
+                        <p className="text-amber-800 leading-relaxed">{lesson.theoryGuide.teacherTip}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-brand-50 border border-brand-200 text-brand-900 text-xs sm:text-sm">
+                    <p className="font-bold mb-1">Fokus Pembelajaran:</p>
+                    <p>Pelajaran ini melatih kompetensi {lesson.category} pada tingkat {lesson.level}. Kerjakan setiap aktivitas interaktif dengan cermat untuk memahami pola kalimat dan memperkuat ingatan visual.</p>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600">
+                    <p className="font-bold text-slate-800 mb-1">Tip Belajar:</p>
+                    <p>Ucapkan setiap kata atau kalimat secara lisan dengan suara yang jelas saat menjawab untuk melatih memori otot lidah dan intonasi alami.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <button
+                onClick={() => setShowTheoryModal(false)}
+                className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-colors"
+              >
+                Lanjutkan Kuis
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { CURRICULA, PathNode } from '../data/curriculum';
 import { Lesson, SkillCategory } from '../types';
+import { LearningMaterialsView } from './LearningMaterialsView';
 import { sounds } from '../utils/sound';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
+  const [mainView, setMainView] = useState<'path' | 'materials'>('path');
   const [selectedLevel, setSelectedLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Intermediate');
   const [selectedSkill, setSelectedSkill] = useState<string>('All');
 
@@ -35,68 +37,109 @@ export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
-      {/* Top Header */}
-      <div className="text-center mb-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">
-          Visual Curriculum Path
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2 mb-2">
-          {curriculum.title}
-        </h1>
-        <p className="text-sm text-slate-500 max-w-lg mx-auto">
-          {curriculum.description}
-        </p>
+    <div className="py-6 sm:py-8">
+      {/* Top Main Mode Switcher: Visual Path vs Materi Pembelajaran */}
+      <div className="flex items-center justify-center mb-8 px-4">
+        <div className="inline-flex p-1.5 rounded-2xl bg-slate-200/70 border border-slate-300/60 shadow-soft-sm">
+          <button
+            onClick={() => { sounds.playClick(); setMainView('path'); }}
+            className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${
+              mainView === 'path'
+                ? 'bg-white text-brand-600 shadow-soft-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            <span>Alur Belajar Interaktif</span>
+          </button>
+
+          <button
+            onClick={() => { sounds.playClick(); setMainView('materials'); }}
+            className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${
+              mainView === 'materials'
+                ? 'bg-white text-brand-600 shadow-soft-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-indigo-600" />
+            <span>Materi Pembelajaran & Teori</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-brand-100 text-brand-700 font-black hidden sm:inline">
+              Lengkap
+            </span>
+          </button>
+        </div>
       </div>
 
-      {/* Level Tabs: Beginner, Intermediate, Advanced */}
-      <div className="flex items-center justify-center gap-2 p-1.5 bg-slate-200/60 rounded-2xl max-w-md mx-auto mb-8 border border-slate-300/40">
-        {(['Beginner', 'Intermediate', 'Advanced'] as const).map((lvl) => {
-          const isSelected = selectedLevel === lvl;
-          return (
-            <button
-              key={lvl}
-              onClick={() => {
-                sounds.playClick();
-                setSelectedLevel(lvl);
-              }}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                isSelected
-                  ? 'bg-white text-brand-600 shadow-soft-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>{lvl}</span>
-              <span className="text-[10px] block font-normal opacity-80">
-                {lvl === 'Beginner' ? 'A1-A2' : lvl === 'Intermediate' ? 'B1-B2' : 'C1-C2'}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+      {mainView === 'materials' ? (
+        <LearningMaterialsView
+          onStartLessonById={(lessonId) => {
+            const found = lessons.find(l => l.id === lessonId) || lessons[0];
+            onStartLesson(found);
+          }}
+        />
+      ) : (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          {/* Top Header */}
+          <div className="text-center mb-8">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">
+              Visual Curriculum Path
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mt-2 mb-2">
+              {curriculum.title}
+            </h1>
+            <p className="text-sm text-slate-500 max-w-lg mx-auto">
+              {curriculum.description}
+            </p>
+          </div>
 
-      {/* Skill Filters */}
-      <div className="flex items-center justify-center flex-wrap gap-1.5 mb-12">
-        {skillFilters.map((skill) => {
-          const isActive = selectedSkill === skill;
-          return (
-            <button
-              key={skill}
-              onClick={() => {
-                sounds.playClick();
-                setSelectedSkill(skill);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                isActive
-                  ? 'bg-brand-600 text-white shadow-soft-sm'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-              }`}
-            >
-              {skill}
-            </button>
-          );
-        })}
-      </div>
+          {/* Level Tabs: Beginner, Intermediate, Advanced */}
+          <div className="flex items-center justify-center gap-2 p-1.5 bg-slate-200/60 rounded-2xl max-w-md mx-auto mb-8 border border-slate-300/40">
+            {(['Beginner', 'Intermediate', 'Advanced'] as const).map((lvl) => {
+              const isSelected = selectedLevel === lvl;
+              return (
+                <button
+                  key={lvl}
+                  onClick={() => {
+                    sounds.playClick();
+                    setSelectedLevel(lvl);
+                  }}
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                    isSelected
+                      ? 'bg-white text-brand-600 shadow-soft-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span>{lvl}</span>
+                  <span className="text-[10px] block font-normal opacity-80">
+                    {lvl === 'Beginner' ? 'A1-A2' : lvl === 'Intermediate' ? 'B1-B2' : 'C1-C2'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Skill Filters */}
+          <div className="flex items-center justify-center flex-wrap gap-1.5 mb-12">
+            {skillFilters.map((skill) => {
+              const isActive = selectedSkill === skill;
+              return (
+                <button
+                  key={skill}
+                  onClick={() => {
+                    sounds.playClick();
+                    setSelectedSkill(skill);
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-brand-600 text-white shadow-soft-sm'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  {skill}
+                </button>
+              );
+            })}
+          </div>
 
       {/* VISUAL LEARNING PATH (Node Line Stepper) */}
       <div className="relative max-w-xl mx-auto py-4">
@@ -200,6 +243,8 @@ export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
         </div>
       </div>
     </div>
+  )}
+</div>
   );
 };
 
