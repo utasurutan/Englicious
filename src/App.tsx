@@ -18,12 +18,13 @@ import { LeaderboardModal } from './components/LeaderboardModal';
 import { CertificateModal } from './components/CertificateModal';
 import { ProgressDashboard } from './components/ProgressDashboard';
 import { OnboardingModal } from './components/OnboardingModal';
+import { MpiCoverThumbnail } from './components/MpiCoverThumbnail';
 import { sounds } from './utils/sound';
 import { SpeechService } from './utils/speech';
 
 export const App: React.FC = () => {
-  // Current view state
-  const [currentView, setCurrentView] = useState<string>('landing');
+  // Current view state - Starts on MPI Cover Thumbnail Screen!
+  const [currentView, setCurrentView] = useState<string>('cover');
   const [practiceTab, setPracticeTab] = useState<'listening' | 'reading' | 'writing' | 'roleplay' | 'srs' | 'exam-prep'>('listening');
 
   // Modals state
@@ -169,20 +170,32 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans pb-16 md:pb-0">
-      {/* Top Desktop & Tablet Navigation */}
-      <Navbar
-        currentView={currentView}
-        onNavigate={handleNavigate}
-        user={user}
-        soundEnabled={soundEnabled}
-        onToggleSound={handleToggleSound}
-        onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
-        onOpenCertificate={() => setIsCertificateOpen(true)}
-        onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
-      />
+      {/* Top Desktop & Tablet Navigation (Hidden on Cover Thumbnail screen) */}
+      {currentView !== 'cover' && (
+        <Navbar
+          currentView={currentView}
+          onNavigate={handleNavigate}
+          user={user}
+          soundEnabled={soundEnabled}
+          onToggleSound={handleToggleSound}
+          onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
+          onOpenCertificate={() => setIsCertificateOpen(true)}
+          onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
+        />
+      )}
 
       {/* Main Routed View Content */}
       <div className="flex-1">
+        {/* 0. Media Pembelajaran Interaktif (MPI) Cover / Thumbnail Awal */}
+        {currentView === 'cover' && (
+          <MpiCoverThumbnail
+            onStartLearning={() => setCurrentView('dashboard')}
+            onExploreCourses={() => setCurrentView('learn')}
+            soundEnabled={soundEnabled}
+            onToggleSound={handleToggleSound}
+          />
+        )}
+
         {currentView === 'landing' && (
           <LandingPage
             onStartLearning={() => setIsOnboardingOpen(true)}
@@ -322,11 +335,13 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <MobileNav
-        currentView={currentView}
-        onNavigate={handleNavigate}
-      />
+      {/* Mobile Bottom Navigation (Hidden on Cover Thumbnail screen) */}
+      {currentView !== 'cover' && (
+        <MobileNav
+          currentView={currentView}
+          onNavigate={handleNavigate}
+        />
+      )}
 
       {/* Fullscreen Interactive Lesson Overlay */}
       {activeLesson && (

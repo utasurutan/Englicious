@@ -60,11 +60,11 @@ export const Navbar: React.FC<Props> = ({
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Brand Logo - Navigates to Dashboard or Home */}
+        {/* Brand Logo - Navigates to MPI Cover Thumbnail */}
         <div 
-          onClick={() => handleNav('dashboard')} 
+          onClick={() => handleNav('cover')} 
           className="flex items-center gap-2.5 cursor-pointer select-none group"
-          title="Englicious - Go to Dashboard"
+          title="Englicious - Buka Cover Thumbnail MPI"
         >
           <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-soft group-hover:scale-105 transition-transform">
             <span className="font-black text-xl tracking-tighter">E</span>
@@ -75,10 +75,10 @@ export const Navbar: React.FC<Props> = ({
                 Englicious
               </span>
               <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-brand-50 text-brand-700 border border-brand-100">
-                PRO
+                MPI PRO
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-medium hidden sm:block">Learn • Practice • Master</p>
+            <p className="text-[10px] text-slate-400 font-medium hidden sm:block">Media Pembelajaran Interaktif</p>
           </div>
         </div>
 
@@ -305,10 +305,24 @@ export const Navbar: React.FC<Props> = ({
                     </span>
                   </button>
 
+                  {/* Halaman Cover / Thumbnail Awal MPI */}
+                  <button
+                    onClick={() => handleNav('cover')}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-brand-700 bg-brand-50/70 hover:bg-brand-100 transition-colors flex items-center justify-between pt-2 border-t border-slate-100 group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-brand-600" />
+                      <span>Cover / Thumbnail MPI</span>
+                    </div>
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-brand-600 text-white">
+                      AWAL
+                    </span>
+                  </button>
+
                   {/* Marketing / Overview Landing Page */}
                   <button
                     onClick={() => handleNav('landing')}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-2 pt-2 border-t border-slate-100"
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-2"
                   >
                     <Globe className="w-4 h-4 text-slate-400" />
                     <span>Platform Overview (Landing)</span>
