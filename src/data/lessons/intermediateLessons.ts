@@ -402,7 +402,7 @@ export const INTERMEDIATE_LESSONS: Lesson[] = [
     category: 'Grammar',
     estimatedMinutes: 20,
     xpTotal: 300,
-    progressPercent: 20,
+    progressPercent: 0,
     completed: false,
     unlocked: true,
     theoryGuide: {
@@ -1114,7 +1114,7 @@ export const INTERMEDIATE_LESSONS: Lesson[] = [
     category: 'Vocabulary',
     estimatedMinutes: 20,
     xpTotal: 300,
-    progressPercent: 40,
+    progressPercent: 0,
     completed: false,
     unlocked: true,
     theoryGuide: {
@@ -1492,7 +1492,7 @@ export const INTERMEDIATE_LESSONS: Lesson[] = [
     category: 'Speaking',
     estimatedMinutes: 20,
     xpTotal: 300,
-    progressPercent: 40,
+    progressPercent: 0,
     completed: false,
     unlocked: true,
     theoryGuide: {

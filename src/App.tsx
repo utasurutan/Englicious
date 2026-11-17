@@ -41,6 +41,20 @@ export const App: React.FC = () => {
     return localStorage.getItem('englicious_preferences_completed') === 'true';
   });
 
+  // Track completed learning path nodes (Sequential Prerequisite tracking)
+  const [completedNodeIds, setCompletedNodeIds] = useState<string[]>(() => {
+    const saved = localStorage.getItem('englicious_completed_nodes');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {}
+    }
+    return ['node-b1', 'node-b2', 'node-b3-pdf'];
+  });
+
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const [viewBeforeLesson, setViewBeforeLesson] = useState<string>('learn');
+
   // Sound cues state
   const [soundEnabled, setSoundEnabled] = useState(true);
 
@@ -112,12 +126,19 @@ export const App: React.FC = () => {
     localStorage.setItem('englicious_lessons_state_v3', JSON.stringify(lessons));
   }, [lessons]);
 
+  // Save completed nodes
+  useEffect(() => {
+    localStorage.setItem('englicious_completed_nodes', JSON.stringify(completedNodeIds));
+  }, [completedNodeIds]);
+
   const handleToggleSound = () => {
     const next = sounds.toggleSound();
     setSoundEnabled(next);
   };
 
-  const handleStartLesson = (lesson: Lesson) => {
+  const handleStartLesson = (lesson: Lesson, nodeId?: string) => {
+    setViewBeforeLesson(currentView);
+    setActiveNodeId(nodeId || null);
     setActiveLesson(lesson);
   };
 
@@ -136,6 +157,11 @@ export const App: React.FC = () => {
       return l;
     }));
 
+    // If node was explicitly passed from LearningPath, mark it completed
+    if (activeNodeId) {
+      setCompletedNodeIds(prev => prev.includes(activeNodeId) ? prev : [...prev, activeNodeId]);
+    }
+
     // Update user stats
     setUser(prev => ({
       ...prev,
@@ -146,7 +172,8 @@ export const App: React.FC = () => {
     }));
 
     setActiveLesson(null);
-    setCurrentView('dashboard');
+    setActiveNodeId(null);
+    setCurrentView(viewBeforeLesson || 'dashboard');
   };
 
   const handleSelectRecommendedLesson = (lessonId: string) => {
@@ -262,6 +289,14 @@ export const App: React.FC = () => {
             lessons={lessons}
             onStartLesson={handleStartLesson}
             onRewardXp={handleRewardXp}
+            completedNodeIds={completedNodeIds}
+            onCompleteNode={(nodeId) => {
+              setCompletedNodeIds(prev => prev.includes(nodeId) ? prev : [...prev, nodeId]);
+            }}
+            onResetPath={() => {
+              setCompletedNodeIds(['node-b1', 'node-b2', 'node-b3-pdf']);
+              localStorage.removeItem('englicious_completed_pdfs');
+            }}
           />
         )}
 

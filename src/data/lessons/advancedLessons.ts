@@ -10,7 +10,7 @@ export const ADVANCED_LESSONS: Lesson[] = [
     category: 'Grammar',
     estimatedMinutes: 20,
     xpTotal: 320,
-    progressPercent: 25,
+    progressPercent: 0,
     completed: false,
     unlocked: true,
     theoryGuide: {
@@ -362,7 +362,7 @@ export const ADVANCED_LESSONS: Lesson[] = [
     category: 'Listening',
     estimatedMinutes: 20,
     xpTotal: 300,
-    progressPercent: 35,
+    progressPercent: 0,
     completed: false,
     unlocked: true,
     theoryGuide: {
