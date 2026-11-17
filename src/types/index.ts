@@ -156,7 +156,12 @@ export type VisualObjectId =
   | 'clock' 
   | 'bicycle' 
   | 'books' 
-  | 'house';
+  | 'house'
+  | 'pencil'
+  | 'microscope'
+  | 'globe'
+  | 'guitar'
+  | 'telescope';
 
 export interface VisualObjectData {
   objectId: VisualObjectId;

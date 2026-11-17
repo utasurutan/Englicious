@@ -16,6 +16,7 @@ import { VocabSRSDeck } from './components/VocabSRSDeck';
 import { SpeedChallenge } from './components/SpeedChallenge';
 import { LeaderboardModal } from './components/LeaderboardModal';
 import { CertificateModal } from './components/CertificateModal';
+import { TeacherReportModal } from './components/TeacherReportModal';
 import { ProgressDashboard } from './components/ProgressDashboard';
 import { OnboardingModal } from './components/OnboardingModal';
 import { MpiCoverThumbnail } from './components/MpiCoverThumbnail';
@@ -33,6 +34,7 @@ export const App: React.FC = () => {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isSpeedChallengeOpen, setIsSpeedChallengeOpen] = useState(false);
+  const [isTeacherReportOpen, setIsTeacherReportOpen] = useState(false);
 
   // Sound cues state
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -181,6 +183,7 @@ export const App: React.FC = () => {
           onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
           onOpenCertificate={() => setIsCertificateOpen(true)}
           onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
+          onOpenTeacherReport={() => setIsTeacherReportOpen(true)}
         />
       )}
 
@@ -191,6 +194,12 @@ export const App: React.FC = () => {
           <MpiCoverThumbnail
             onStartLearning={() => setCurrentView('dashboard')}
             onExploreCourses={() => setCurrentView('learn')}
+            onOpenMaterials={() => setCurrentView('learn')}
+            onStart3dQuiz={() => {
+              const quiz = lessons.find(l => l.id === 'lesson-visual-objects') || lessons[0];
+              handleStartLesson(quiz);
+            }}
+            onOpenTeacherReport={() => setIsTeacherReportOpen(true)}
             soundEnabled={soundEnabled}
             onToggleSound={handleToggleSound}
           />
@@ -373,6 +382,13 @@ export const App: React.FC = () => {
         userName={user.name}
         level={user.level}
         cefr={user.cefr}
+      />
+
+      {/* Teacher Report & Evaluation Gradebook Modal */}
+      <TeacherReportModal
+        isOpen={isTeacherReportOpen}
+        onClose={() => setIsTeacherReportOpen(false)}
+        user={user}
       />
 
       {/* 60s Speed Drill Modal */}

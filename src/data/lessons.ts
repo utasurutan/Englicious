@@ -914,6 +914,138 @@ export const SAMPLE_LESSONS: Lesson[] = [
             hint: 'A circular device with bells on top that makes a sound to wake you up.'
           }
         }
+      },
+      {
+        id: 'vis-act-7',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 7',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'pencil',
+            objectName: 'Pencil',
+            category: 'School & Stationery',
+            phonetic: '/ˈpen.səl/',
+            indonesianMeaning: 'Pensil',
+            question: 'Look at this writing instrument: What is this called in English?',
+            options: ['Marker', 'Pencil', 'Fountain Pen', 'Eraser'],
+            correctAnswer: 'Pencil',
+            exampleSentence: 'She sharpened her yellow pencil before starting the English grammar exam.',
+            funFact: 'An average wooden pencil has enough graphite to draw a continuous line 35 miles long!',
+            hint: 'A wooden writing instrument with a graphite core and a pink eraser at the top.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-8',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 8',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'microscope',
+            objectName: 'Microscope',
+            category: 'Science & Laboratory',
+            phonetic: '/ˈmaɪ.krə.skoʊp/',
+            indonesianMeaning: 'Mikroskop',
+            question: 'Look at this optical scientific laboratory instrument: What is it called in English?',
+            options: ['Telescope', 'Thermometer', 'Microscope', 'Magnifier'],
+            correctAnswer: 'Microscope',
+            exampleSentence: 'Students used a high-powered microscope in biology class to examine plant cells.',
+            funFact: 'Antonie van Leeuwenhoek improved the microscope in the 1670s, discovering microscopic bacteria!',
+            hint: 'An optical instrument used for viewing very small objects typically magnified several hundred times.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-9',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 9',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'globe',
+            objectName: 'Globe',
+            category: 'Geography & World',
+            phonetic: '/ɡloʊb/',
+            indonesianMeaning: 'Bola Dunia / Globe',
+            question: 'Look at this spherical model of Earth: What is this called in English?',
+            options: ['Atlas', 'Compass', 'Globe', 'Planetarium'],
+            correctAnswer: 'Globe',
+            exampleSentence: 'The teacher spun the world globe on its axis to point out the continent of Australia.',
+            funFact: 'The oldest surviving terrestrial globe was constructed in Nuremberg, Germany in 1492.',
+            hint: 'A spherical three-dimensional model of the Earth tilted at an angle on a stand.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-10',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 10',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'guitar',
+            objectName: 'Guitar',
+            category: 'Music & Instruments',
+            phonetic: '/ɡɪˈtɑːr/',
+            indonesianMeaning: 'Gitar',
+            question: 'Look at this stringed musical instrument: What is this called in English?',
+            options: ['Violin', 'Guitar', 'Cello', 'Ukulele'],
+            correctAnswer: 'Guitar',
+            exampleSentence: 'He played a beautiful melody on his acoustic wooden guitar around the campfire.',
+            funFact: 'The modern acoustic guitar evolved from Renaissance instruments with four strings in Spain.',
+            hint: 'A wooden instrument with a fretted fingerboard and six strings plucked or strummed.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-11',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 11',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'telescope',
+            objectName: 'Telescope',
+            category: 'Astronomy & Space',
+            phonetic: '/ˈtel.ə.skoʊp/',
+            indonesianMeaning: 'Teleskop / Teropong Bintang',
+            question: 'Look at this optical instrument pointing to the sky: What is this called in English?',
+            options: ['Binoculars', 'Periscope', 'Telescope', 'Kaleidoscope'],
+            correctAnswer: 'Telescope',
+            exampleSentence: 'We gazed through the astronomical telescope to observe the rings of Saturn.',
+            funFact: 'Galileo Galilei was the first person to use a telescope to observe celestial objects in 1609.',
+            hint: 'An optical instrument mounted on a tripod designed to observe distant stars and planets.'
+          }
+        }
+      },
+      {
+        id: 'vis-act-12',
+        type: 'multiple-choice',
+        title: 'Identify 3D Object 12',
+        xpValue: 15,
+        data: {
+          kind: 'visual-object',
+          data: {
+            objectId: 'car',
+            objectName: 'Car',
+            category: 'Transportation & Travel',
+            phonetic: '/kɑːr/',
+            indonesianMeaning: 'Mobil',
+            question: 'Look at this modern vehicle: What is this called in English?',
+            options: ['Motorcycle', 'Bus', 'Car', 'Truck'],
+            correctAnswer: 'Car',
+            exampleSentence: 'They drove their red electric car across the scenic coastal highway.',
+            funFact: 'There are currently more than 1.4 billion motor vehicles in use worldwide!',
+            hint: 'A four-wheeled road vehicle powered by an engine or electric battery.'
+          }
+        }
       }
     ]
   }

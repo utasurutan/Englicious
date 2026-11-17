@@ -2,25 +2,53 @@ import React, { useState } from 'react';
 import { 
   Play, Target, BookOpen, Info, Volume2, VolumeX, 
   ArrowRight, Sparkles, CheckCircle2, Award, HelpCircle, 
-  X, Layers, Globe, Star, ShieldCheck, Flame, Zap 
+  X, Layers, Globe, Star, ShieldCheck, Flame, Zap,
+  ChevronLeft, ChevronRight, FileText, Check, Mic
 } from 'lucide-react';
+import { VisualObjectId } from '../types';
 import { VisualObjectRenderer } from './activities/VisualObjectRenderer';
 import { sounds } from '../utils/sound';
+import { SpeechService } from '../utils/speech';
 
 interface Props {
   onStartLearning: () => void;
   onExploreCourses: () => void;
+  onOpenMaterials?: () => void;
+  onStart3dQuiz?: () => void;
+  onOpenTeacherReport?: () => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
 }
 
+const SHOWCASE_OBJECTS: Array<{ id: VisualObjectId; name: string; phonetic: string; meaning: string }> = [
+  { id: 'apple', name: 'Apple', phonetic: '/ˈæp.əl/', meaning: 'Apel' },
+  { id: 'pencil', name: 'Pencil', phonetic: '/ˈpen.səl/', meaning: 'Pensil' },
+  { id: 'microscope', name: 'Microscope', phonetic: '/ˈmaɪ.krə.skoʊp/', meaning: 'Mikroskop' },
+  { id: 'globe', name: 'Globe', phonetic: '/ɡloʊb/', meaning: 'Bola Dunia' },
+  { id: 'guitar', name: 'Guitar', phonetic: '/ɡɪˈtɑːr/', meaning: 'Gitar Akustik' },
+  { id: 'telescope', name: 'Telescope', phonetic: '/ˈtel.ə.skoʊp/', meaning: 'Teleskop Bintang' },
+  { id: 'coffee', name: 'Coffee Mug', phonetic: '/ˈkɒf.i mʌɡ/', meaning: 'Cangkir Kopi' },
+  { id: 'airplane', name: 'Airplane', phonetic: '/ˈeə.pleɪn/', meaning: 'Pesawat Terbang' },
+  { id: 'headphones', name: 'Headphones', phonetic: '/ˈhɛd.foʊnz/', meaning: 'Headphone' },
+  { id: 'backpack', name: 'Backpack', phonetic: '/ˈbæk.pæk/', meaning: 'Ransel' },
+  { id: 'car', name: 'Electric Car', phonetic: '/kɑːr/', meaning: 'Mobil' },
+  { id: 'clock', name: 'Alarm Clock', phonetic: '/əˈlɑːm klɒk/', meaning: 'Jam Beker' }
+];
+
 export const MpiCoverThumbnail: React.FC<Props> = ({
   onStartLearning,
   onExploreCourses,
+  onOpenMaterials,
+  onStart3dQuiz,
+  onOpenTeacherReport,
   soundEnabled,
   onToggleSound
 }) => {
   const [activeModal, setActiveModal] = useState<'objectives' | 'guide' | 'about' | null>(null);
+  const [currentShowcaseIdx, setCurrentShowcaseIdx] = useState(0);
+  const [isSpeakingIntro, setIsSpeakingIntro] = useState(false);
+
+  const currentObj = SHOWCASE_OBJECTS[currentShowcaseIdx];
 
   const handleStart = () => {
     sounds.playClick();
@@ -30,6 +58,40 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
   const handleOpenModal = (modal: 'objectives' | 'guide' | 'about') => {
     sounds.playClick();
     setActiveModal(modal);
+  };
+
+  const handleNextObject = () => {
+    sounds.playClick();
+    setCurrentShowcaseIdx(prev => (prev + 1) % SHOWCASE_OBJECTS.length);
+  };
+
+  const handlePrevObject = () => {
+    sounds.playClick();
+    setCurrentShowcaseIdx(prev => (prev - 1 + SHOWCASE_OBJECTS.length) % SHOWCASE_OBJECTS.length);
+  };
+
+  const handlePronounceShowcase = () => {
+    sounds.playClick();
+    SpeechService.speak(`${currentObj.name}. In Indonesian, it means ${currentObj.meaning}.`);
+  };
+
+  const handlePlayVoiceover = () => {
+    sounds.playClick();
+    if (isSpeakingIntro) {
+      SpeechService.stop();
+      setIsSpeakingIntro(false);
+      return;
+    }
+
+    setIsSpeakingIntro(true);
+    SpeechService.speak(
+      "Selamat datang di Englicious, Media Pembelajaran Interaktif Bahasa Inggris karya Sultan. Media ini dirancang khusus untuk pembelajaran mandiri dan kelas, lengkap dengan objek 3D interaktif, materi teori mendalam, dan evaluasi resmi. Silakan klik Mulai Pembelajaran.",
+      1.0,
+      1.0,
+      () => {
+        setIsSpeakingIntro(false);
+      }
+    );
   };
 
   return (
@@ -60,23 +122,33 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Audio Toggle & Quick Enter */}
-        <div className="flex items-center gap-3">
+        {/* Audio Narator & Sound Toggle & Quick Enter */}
+        <div className="flex items-center gap-2.5">
+          {/* Narator Intro Voiceover Button */}
+          <button
+            onClick={handlePlayVoiceover}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+              isSpeakingIntro
+                ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-glow-amber animate-pulse'
+                : 'bg-white/10 hover:bg-white/15 text-slate-200 border-white/10 hover:text-white'
+            }`}
+            title="Dengarkan pengantar suara resmi Media Pembelajaran"
+          >
+            <Mic className={`w-3.5 h-3.5 ${isSpeakingIntro ? 'text-amber-400 animate-spin' : 'text-brand-400'}`} />
+            <span className="hidden sm:inline">
+              {isSpeakingIntro ? 'Narator Sedang Berbicara...' : 'Sambutan Suara Narator'}
+            </span>
+          </button>
+
           <button
             onClick={onToggleSound}
             className="p-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center gap-2 text-xs font-bold"
-            title={soundEnabled ? 'Matikan Suara' : 'Aktifkan Suara'}
+            title={soundEnabled ? 'Matikan Suara Efek' : 'Aktifkan Suara Efek'}
           >
             {soundEnabled ? (
-              <>
-                <Volume2 className="w-4 h-4 text-brand-400" />
-                <span className="hidden sm:inline">Audio: ON</span>
-              </>
+              <Volume2 className="w-4 h-4 text-brand-400" />
             ) : (
-              <>
-                <VolumeX className="w-4 h-4 text-slate-400" />
-                <span className="hidden sm:inline">Audio: OFF</span>
-              </>
+              <VolumeX className="w-4 h-4 text-slate-400" />
             )}
           </button>
 
@@ -91,14 +163,14 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
       </header>
 
       {/* MAIN COVER THUMBNAIL CONTAINER */}
-      <main className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 my-auto z-10">
+      <main className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 my-auto z-10">
         <div className="relative rounded-3xl overflow-hidden border border-white/15 bg-slate-900/80 backdrop-blur-xl shadow-soft-2xl p-6 sm:p-10 lg:p-12">
-          {/* Subtle internal gradient rim */}
+          {/* Internal gradient rim */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-500 via-indigo-500 to-purple-500" />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Title & Metadata */}
-            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
               {/* Category Pill */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/20 border border-brand-400/30 text-brand-300 text-xs font-extrabold tracking-wide">
                 <Sparkles className="w-3.5 h-3.5 text-brand-400" />
@@ -113,17 +185,17 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
                 <p className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-300 mt-2">
                   Media Pembelajaran Interaktif Bahasa Inggris Berbasis Web
                 </p>
-                <p className="text-xs sm:text-sm text-slate-400 mt-3 max-w-xl leading-relaxed mx-auto lg:mx-0">
-                  Aplikasi pembelajaran bahasa Inggris interaktif yang memadukan pengenalan objek 3D, materi teori komprehensif, latihan audio waveform, AI conversation, dan simulasi resmi TOEFL, IELTS, serta TOEIC.
+                <p className="text-xs sm:text-sm text-slate-400 mt-2.5 max-w-xl leading-relaxed mx-auto lg:mx-0">
+                  Media multimedia berbasis web memadukan pengenalan objek 3D interaktif, modul teori tata bahasa lengkap, latihan drag & drop, waveform listening, serta instrumen penilaian guru.
                 </p>
               </div>
 
               {/* Curriculum & Developer Meta Card */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
                 <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-left">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang (Author)</p>
                   <p className="text-xs sm:text-sm font-extrabold text-white mt-0.5">Sultan</p>
-                  <p className="text-[10px] text-brand-400 font-semibold">Author & Developer</p>
+                  <p className="text-[10px] text-brand-400 font-semibold">Project MPI Siswa</p>
                 </div>
 
                 <div className="p-3 rounded-2xl bg-white/5 border border-white/10 text-left">
@@ -140,29 +212,59 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
               </div>
 
               {/* PRIMARY ACTION BUTTONS */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 pt-4">
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
                   onClick={handleStart}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-base shadow-glow-brand hover:shadow-glow-brand transition-all flex items-center justify-center gap-3 active:scale-95 group"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm shadow-glow-brand hover:shadow-glow-brand transition-all flex items-center justify-center gap-3 active:scale-95 group"
                 >
-                  <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Play className="w-4 h-4 fill-white ml-0.5" />
+                  <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
                   </div>
                   <span>MULAI PEMBELAJARAN</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
 
-                <button
-                  onClick={() => handleOpenModal('objectives')}
-                  className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                  <Target className="w-4 h-4 text-brand-400" />
-                  <span>Tujuan Pembelajaran</span>
-                </button>
+                {onOpenMaterials && (
+                  <button
+                    onClick={() => { sounds.playClick(); onOpenMaterials(); }}
+                    className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <BookOpen className="w-4 h-4 text-brand-400" />
+                    <span>Materi & Teori</span>
+                  </button>
+                )}
+
+                {onStart3dQuiz && (
+                  <button
+                    onClick={() => { sounds.playClick(); onStart3dQuiz(); }}
+                    className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-400/40 text-indigo-200 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <Sparkles className="w-4 h-4 text-indigo-400" />
+                    <span>Latihan Objek 3D</span>
+                  </button>
+                )}
               </div>
 
-              {/* SECONDARY STANDARD MPI BUTTONS */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-2 text-xs">
+              {/* TEACHER EVALUATION & STANDARD MPI BUTTONS */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1 text-xs">
+                {onOpenTeacherReport && (
+                  <button
+                    onClick={() => { sounds.playClick(); onOpenTeacherReport(); }}
+                    className="px-3.5 py-2 rounded-xl bg-mint-500/20 hover:bg-mint-500/30 border border-mint-400/40 text-mint-300 transition-colors flex items-center gap-1.5 font-bold"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-mint-400" />
+                    <span>Lembar Penilaian Guru (Grade Report)</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => handleOpenModal('objectives')}
+                  className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <Target className="w-3.5 h-3.5 text-brand-400" />
+                  <span>Tujuan Pembelajaran (CP/TP)</span>
+                </button>
+
                 <button
                   onClick={() => handleOpenModal('guide')}
                   className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
@@ -176,26 +278,54 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
                   className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <Info className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Info Media & Guru</span>
+                  <span>Info Media & Profil</span>
                 </button>
               </div>
             </div>
 
-            {/* Right Column: Visual 3D Showcase Graphic */}
+            {/* Right Column: Interactive Visual 3D Showcase Graphic */}
             <div className="lg:col-span-5 relative flex items-center justify-center">
               {/* Outer decorative card frame */}
               <div className="w-full max-w-sm aspect-square rounded-3xl bg-gradient-to-tr from-brand-600/30 via-slate-800 to-purple-600/20 p-1 border border-white/20 shadow-soft-2xl relative flex items-center justify-center overflow-hidden group">
+                
+                {/* 3D Showcase Navigation Arrows */}
+                <button
+                  onClick={handlePrevObject}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/40 hover:bg-black/70 text-white/70 hover:text-white border border-white/10 transition-all active:scale-90"
+                  title="Objek 3D Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={handleNextObject}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-black/40 hover:bg-black/70 text-white/70 hover:text-white border border-white/10 transition-all active:scale-90"
+                  title="Objek 3D Selanjutnya"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
                 {/* Floating 3D Artwork */}
                 <div className="relative z-10 flex flex-col items-center justify-center">
-                  <div className="scale-110 sm:scale-125 mb-2 group-hover:scale-130 transition-transform duration-500">
-                    <VisualObjectRenderer objectId="apple" rotation={{ x: 18, y: -25 }} />
+                  <div 
+                    onClick={handlePronounceShowcase}
+                    className="scale-105 sm:scale-120 mb-2 group-hover:scale-125 transition-transform duration-500 cursor-pointer"
+                    title="Klik untuk mendengarkan pengucapan kata"
+                  >
+                    <VisualObjectRenderer objectId={currentObj.id} rotation={{ x: 18, y: -25 }} />
                   </div>
 
-                  {/* Glass Tag below object */}
-                  <div className="px-4 py-2 rounded-2xl bg-black/60 backdrop-blur-md border border-white/15 text-center shadow-soft-lg mt-2">
-                    <p className="text-xs font-black text-white">Apple /ˈæp.əl/</p>
-                    <p className="text-[10px] text-brand-300 font-semibold">3D Visual Vocabulary Engine</p>
-                  </div>
+                  {/* Glass Tag below object with Audio Button */}
+                  <button
+                    onClick={handlePronounceShowcase}
+                    className="px-4 py-2 rounded-2xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/15 text-center shadow-soft-lg mt-2 transition-all group flex items-center gap-2"
+                  >
+                    <Volume2 className="w-3.5 h-3.5 text-brand-400 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <p className="text-xs font-black text-white">{currentObj.name} <span className="font-mono text-slate-300 font-semibold">{currentObj.phonetic}</span></p>
+                      <p className="text-[10px] text-brand-300 font-semibold">"{currentObj.meaning}" • 3D Visual Model ({currentShowcaseIdx + 1}/{SHOWCASE_OBJECTS.length})</p>
+                    </div>
+                  </button>
                 </div>
 
                 {/* Floating mini badges */}
@@ -206,7 +336,7 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
 
                 <div className="absolute bottom-4 right-4 z-20 px-3 py-1.5 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/10 text-[10px] font-bold text-amber-400 flex items-center gap-1.5 shadow-soft">
                   <Award className="w-3.5 h-3.5" />
-                  <span>Interactive Audio Waveform</span>
+                  <span>15 Objek 3D Vektor</span>
                 </div>
               </div>
             </div>
@@ -215,8 +345,8 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
       </main>
 
       {/* FOOTER METADATA */}
-      <footer className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 border-t border-white/10 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2 z-10">
-        <p>© 2026 Englicious • Media Pembelajaran Interaktif (MPI) Bahasa Inggris</p>
+      <footer className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 border-t border-white/10 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2 z-10">
+        <p>© 2026 Englicious • Media Pembelajaran Interaktif (MPI) Bahasa Inggris oleh Sultan</p>
         <p className="text-[11px] text-slate-500">
           Dirancang untuk pembelajaran mandiri, penilaian guru, & persiapan tes terstandar
         </p>
@@ -362,9 +492,9 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
                   4
                 </span>
                 <div>
-                  <p className="font-bold text-white">Simulasi Ujian & Sertifikat Kompetensi</p>
+                  <p className="font-bold text-white">Lembar Evaluasi Guru & Cetak Laporan</p>
                   <p className="text-slate-400 text-xs mt-0.5">
-                    Ikuti tes mock TOEFL/IELTS di menu <strong>Exam Prep</strong> dan periksa sertifikat pencapaian terverifikasi di halaman <strong>Progress</strong>.
+                    Buka <strong>Lembar Penilaian Guru</strong> untuk melihat rekap nilai ketuntasan, rubrik kelayakan media, dan mencetak laporan resmi format PDF.
                   </p>
                 </div>
               </div>
@@ -423,7 +553,7 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
               </div>
               <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex justify-between items-center">
                 <span className="text-slate-400">Teknologi yang Digunakan</span>
-                <span className="font-mono text-xs text-mint-400">React 18 + TS + Tailwind + Web Audio</span>
+                <span className="font-mono text-xs text-mint-400">React 18 + TS + Tailwind + Web Speech API</span>
               </div>
             </div>
 

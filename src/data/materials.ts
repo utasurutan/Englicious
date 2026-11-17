@@ -285,5 +285,140 @@ export const LEARNING_MATERIALS: LearningMaterial[] = [
       explanation: 'Thesis statement di akhir paragraf pembuka berfungsi memberi tahu penguji posisi/jawaban penulis terhadap pertanyaan esai.'
     },
     relatedLessonId: 'lesson-reading-mastery'
+  },
+
+  // 7. ASKING & EXPRESSING OPINIONS, AGREEMENT & DISAGREEMENT
+  {
+    id: 'material-asking-opinions',
+    title: 'Expressing Opinions, Agreement & Polite Disagreement',
+    subtitle: 'Cara mengemukakan pendapat, menyetujui, dan menolak argumen secara santun dalam diskusi formal & informal',
+    category: 'Speaking',
+    level: 'Intermediate',
+    readingTimeMinutes: 6,
+    iconName: 'MessageSquare',
+    tags: ['Opinions', 'Discussion', 'Speaking', 'Polite English', 'Debate'],
+    summary: 'Dalam komunikasi nyata maupun tes speaking IELTS/TOEFL, kemampuan menyampaikan pandangan pribadi dan menanggapi ide orang lain dengan sopan adalah kunci utama penilaian fluency.',
+    sections: [
+      {
+        heading: '1. Cara Menanyakan Pendapat (Asking for Opinion)',
+        content: 'Gunakan frasa bervariasi sesuai situasi sosial:\n• Informal: "What do you think about...?", "How do you feel about...?"\n• Formal: "What is your perspective on...?", "Could you share your views regarding...?"',
+        examples: [
+          { en: 'What do you think about remote working from home?', id: 'Apa pendapatmu tentang bekerja jarak jauh dari rumah?', audioPhrase: 'What do you think about remote working from home?' },
+          { en: 'What is your perspective on sustainable clean energy?', id: 'Bagaimana sudut pandang Anda mengenai energi bersih yang berkelanjutan?', audioPhrase: 'What is your perspective on sustainable clean energy?' }
+        ]
+      },
+      {
+        heading: '2. Cara Menyampaikan Pendapat (Giving Opinions)',
+        content: 'Hindari selalu mengulang "I think". Gunakan alternatif yang lebih berbobot:\n• "In my honest opinion..."\n• "From my perspective / In my view..."\n• "As far as I am concerned..."\n• "I strongly believe that..."',
+        formula: 'Giving Opinion: [Frasa Pembuka] + [Klausa Argumen / Klausa Kalimat Utama]',
+        examples: [
+          { en: 'From my perspective, regular exercise significantly boosts mental clarity.', id: 'Dari sudut pandang saya, olahraga rutin sangat meningkatkan kejernihan pikiran.', audioPhrase: 'From my perspective, regular exercise significantly boosts mental clarity.' }
+        ],
+        teacherTip: 'Di tes IELTS Speaking Part 3, mulailah jawaban dengan "Well, from my perspective..." untuk memberi jeda berpikir alami 1 detik!'
+      },
+      {
+        heading: '3. Menolak Argumen dengan Santun (Polite Disagreement)',
+        content: 'Dalam budaya penutur asli Inggris, mengatakan "No, you are wrong" terdengar kasar (rude). Gunakan teknik pelembut (softening phrases):\n• "I see your point, but I see it somewhat differently."\n• "I am afraid I have to disagree with you on that."\n• "That makes sense, however, have you considered...?"',
+        examples: [
+          { en: 'I see your point, but cost is also a crucial factor.', id: 'Saya paham maksud Anda, tetapi biaya juga merupakan faktor yang sangat penting.', audioPhrase: 'I see your point, but cost is also a crucial factor.' }
+        ]
+      }
+    ],
+    quickCheck: {
+      question: 'Manakah cara paling sopan untuk menolak pendapat rekan kerja dalam rapat bahasa Inggris?',
+      options: [
+        'You are completely wrong about this idea.',
+        'I see your point, but I am afraid I have a different perspective.',
+        'Stop talking because your opinion is bad.',
+        'No, I hate your suggestion.'
+      ],
+      correctIndex: 1,
+      explanation: 'Frasa "I see your point, but I am afraid I have a different perspective" menghargai lawan bicara terlebih dahulu sebelum menyampaikan pandangan yang berbeda.'
+    },
+    relatedLessonId: 'lesson-basic-conversations'
+  },
+
+  // 8. TOP 25 HIGH-FREQUENCY ENGLISH IDIOMS
+  {
+    id: 'material-idioms',
+    title: 'Top High-Frequency English Idioms & Everyday Slang',
+    subtitle: 'Kuasai idiom-idiom populer penutur asli yang tidak bisa diterjemahkan kata per kata',
+    category: 'Vocabulary',
+    level: 'Intermediate',
+    readingTimeMinutes: 7,
+    iconName: 'Sparkles',
+    tags: ['Idioms', 'Vocabulary', 'Figurative Language', 'Fluency'],
+    summary: 'Idiom adalah ungkapan kiasan yang maknanya berbeda dari gabungan kata harfiahnya. Menguasai idiom membuat bahasa Inggris Anda terdengar 10x lebih natural dan seperti penutur asli.',
+    sections: [
+      {
+        heading: '1. Idiom Situasi Keseharian & Kerja',
+        content: '• "Piece of cake" ➔ Sangat mudah (Very easy)\n• "Bite the bullet" ➔ Menghadapi situasi sulit dengan tabah\n• "Hit the books" ➔ Mulai belajar giat\n• "Under the weather" ➔ Sedang tidak enak badan / agak sakit\n• "Break a leg" ➔ Semoga sukses (Good luck, terutama di atas panggung)',
+        examples: [
+          { en: 'The English vocabulary quiz was a piece of cake!', id: 'Kuis kosakata bahasa Inggris tadi sangat mudah!', audioPhrase: 'The English vocabulary quiz was a piece of cake!' },
+          { en: 'I cannot attend class today because I feel under the weather.', id: 'Saya tidak bisa menghadiri kelas hari ini karena saya sedang tidak enak badan.', audioPhrase: 'I cannot attend class today because I feel under the weather.' }
+        ]
+      },
+      {
+        heading: '2. Idiom Keputusan & Masalah',
+        content: '• "Cost an arm and a leg" ➔ Sangat mahal harganya\n• "See eye to eye" ➔ Bersepakat atau sependapat seutuhnya\n• "Once in a blue moon" ➔ Sangat langka / jarang terjadi\n• "Call it a day" ➔ Mengakhiri pekerjaan hari ini karena sudah selesai',
+        examples: [
+          { en: 'My manager and I finally saw eye to eye on the new project strategy.', id: 'Manajer saya dan saya akhirnya sependapat mengenai strategi proyek baru.', audioPhrase: 'My manager and I finally saw eye to eye on the new project strategy.' },
+          { en: 'We have finished six modules, so let\'s call it a day.', id: 'Kita sudah menyelesaikan enam modul, jadi mari kita sudahi pekerjaan hari ini.', audioPhrase: 'We have finished six modules, so let\'s call it a day.' }
+        ],
+        teacherTip: 'Gunakan 1-2 idiom tepat dalam percakapan lisan IELTS. Jangan terlalu berlebihan agar tetap terdengar otentik dan alami!'
+      }
+    ],
+    quickCheck: {
+      question: 'Apa arti kalimat "He visits his hometown once in a blue moon"?',
+      options: [
+        'Dia pulang kampung saat bulan purnama saja',
+        'Dia sangat jarang / langka pulang ke kampung halamannya',
+        'Dia pulang kampung setiap akhir pekan',
+        'Dia suka mengamati warna bulan di kampung'
+      ],
+      correctIndex: 1,
+      explanation: 'Idiom "once in a blue moon" bermakna kiasan sesuatu yang sangat jarang sekali terjadi (very rarely).'
+    },
+    relatedLessonId: 'lesson-vocab-foundations'
+  },
+
+  // 9. PROFESSIONAL EMAIL & FORMAL LETTER WRITING
+  {
+    id: 'material-formal-email',
+    title: 'Professional Email & Formal Letter Writing Blueprint',
+    subtitle: 'Panduan menulis surat lamaran, korespondensi guru/dosen, dan email kantor profesional',
+    category: 'Writing',
+    level: 'Intermediate',
+    readingTimeMinutes: 8,
+    iconName: 'BookOpen',
+    tags: ['Formal Email', 'Writing', 'Professional English', 'Correspondence'],
+    summary: 'Menulis email formal membutuhkan etika penulisan (email etiquette) yang tepat, mulai dari salam pembuka profesional, maksud penulisan tanpa berbelit-belit, hingga penutup yang sopan.',
+    sections: [
+      {
+        heading: '1. Struktur Anatomi Email Profesional',
+        content: '1. Subject Line: Ringkas, jelas, dan spesifik (Contoh: "Inquiry Regarding English Exam Preparation - Sultan")\n2. Formal Salutation: Salam pembuka ("Dear Mr. / Ms. [Nama Belakang]" atau "Dear Dr. [Nama]")\n3. Opening Purpose: Menyatakan maksud email di kalimat pertama ("I am writing to inquire about...")\n4. Body Paragraphs: Informasi detail atau pertanyaan spesifik\n5. Call to Action / Next Step: Tindakan lanjutan yang diharapkan\n6. Professional Sign-off: Salam penutup ("Sincerely,", "Best regards,") dan tanda tangan nama lengkap.',
+        formula: 'Opening sentence formula: "I am writing to [verb: inquire / submit / follow up / inform you] regarding [topic]."',
+        examples: [
+          { en: 'I am writing to submit my interactive learning media project assignment.', id: 'Saya menulis email ini untuk mengumpulkan tugas proyek media pembelajaran interaktif saya.', audioPhrase: 'I am writing to submit my interactive learning media project assignment.' }
+        ]
+      },
+      {
+        heading: '2. Frasa Baku Email Formal vs. Informal',
+        content: '• Informal: "Thanks" ➔ Formal: "Thank you for your assistance."\n• Informal: "Need help" ➔ Formal: "I would greatly appreciate your guidance."\n• Informal: "Tell me ASAP" ➔ Formal: "Could you kindly provide an update at your earliest convenience?"\n• Informal: "Bye" ➔ Formal: "Warm regards / Respectfully yours,"',
+        teacherTip: 'Hindari penggunaan singkatan informal seperti "gonna", "wanna", atau huruf kapital semua (all-caps) dalam korespondensi akademis dan profesional!'
+      }
+    ],
+    quickCheck: {
+      question: 'Manakah salam pembuka yang paling tepat jika Anda menulis email formal kepada guru pembimbing laki-laki bernama John Smith?',
+      options: [
+        'Hey John, what\'s up?',
+        'Dear Mr. Smith,',
+        'Hello Smith dude,',
+        'Yo teacher,'
+      ],
+      correctIndex: 1,
+      explanation: 'Dalam etika penulisan formal bahasa Inggris, gunakan "Dear Mr. [Last Name]," diikuti tanda koma.'
+    },
+    relatedLessonId: 'lesson-reading-mastery'
   }
 ];

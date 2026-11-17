@@ -349,6 +349,192 @@ export const VisualObjectRenderer: React.FC<Props> = ({
             <line x1="117" y1="121" x2="135" y2="121" stroke="#ffffff" strokeWidth="1.5" />
           </svg>
         )}
+
+        {/* 11. PENCIL */}
+        {objectId === 'pencil' && (
+          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-float-slow">
+            <defs>
+              <linearGradient id="pencilShaft" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="50%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#d97706" />
+              </linearGradient>
+              <linearGradient id="eraserGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#f472b6" />
+                <stop offset="100%" stopColor="#db2777" />
+              </linearGradient>
+            </defs>
+            <g transform="rotate(-38 100 100)">
+              {/* Pink Eraser */}
+              <rect x="90" y="24" width="20" height="24" rx="6" fill="url(#eraserGrad)" />
+              {/* Silver Ferrule Band */}
+              <rect x="89" y="44" width="22" height="18" rx="2" fill="#94a3b8" />
+              <line x1="89" y1="50" x2="111" y2="50" stroke="#64748b" strokeWidth="2" />
+              <line x1="89" y1="56" x2="111" y2="56" stroke="#64748b" strokeWidth="2" />
+              {/* Yellow Pencil Shaft (Hexagonal facets) */}
+              <rect x="90" y="62" width="20" height="85" fill="url(#pencilShaft)" />
+              <line x1="97" y1="62" x2="97" y2="147" stroke="#b45309" strokeWidth="1.5" />
+              <line x1="104" y1="62" x2="104" y2="147" stroke="#fef08a" strokeWidth="1.5" />
+              {/* Sharpened Wooden Tip */}
+              <polygon points="90,147 110,147 100,175" fill="#fde68a" />
+              {/* Dark Graphite Lead Tip */}
+              <polygon points="97,166 103,166 100,175" fill="#1e293b" />
+            </g>
+          </svg>
+        )}
+
+        {/* 12. MICROSCOPE */}
+        {objectId === 'microscope' && (
+          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-float-slow">
+            <defs>
+              <linearGradient id="steelArm" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#475569" />
+                <stop offset="50%" stopColor="#64748b" />
+                <stop offset="100%" stopColor="#334155" />
+              </linearGradient>
+              <linearGradient id="scopeTube" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0284c7" />
+                <stop offset="50%" stopColor="#38bdf8" />
+                <stop offset="100%" stopColor="#0369a1" />
+              </linearGradient>
+            </defs>
+            {/* Horseshoe Base */}
+            <path d="M50 168 C50 156, 150 156, 150 168 L142 178 C142 182, 58 182, 58 178 Z" fill="#1e293b" />
+            <ellipse cx="100" cy="168" rx="42" ry="10" fill="#334155" />
+            {/* Mirror / Light Source */}
+            <ellipse cx="98" cy="144" rx="14" ry="7" fill="#93c5fd" stroke="#475569" strokeWidth="2" />
+            {/* Curved Arm */}
+            <path d="M115 160 C145 140, 145 75, 115 65" stroke="url(#steelArm)" strokeWidth="16" strokeLinecap="round" fill="none" />
+            {/* Stage Plate */}
+            <rect x="68" y="120" width="60" height="8" rx="3" fill="#0f172a" />
+            {/* Slide Glass with Sample Dot */}
+            <rect x="80" y="117" width="36" height="4" rx="1" fill="#bae6fd" opacity="0.9" />
+            <circle cx="98" cy="119" r="2" fill="#ef4444" />
+            {/* Coarse Adjustment Knobs */}
+            <circle cx="132" cy="100" r="10" fill="#cbd5e1" stroke="#475569" strokeWidth="2" />
+            <circle cx="132" cy="100" r="5" fill="#64748b" />
+            {/* Body Tube (Tilted) */}
+            <g transform="rotate(18 95 75)">
+              <rect x="88" y="25" width="18" height="48" rx="4" fill="url(#scopeTube)" />
+              {/* Eyepiece */}
+              <rect x="84" y="16" width="26" height="12" rx="3" fill="#1e293b" />
+              <ellipse cx="97" cy="16" rx="10" ry="3" fill="#38bdf8" />
+              {/* Revolving Nosepiece */}
+              <circle cx="97" cy="74" r="14" fill="#1e293b" />
+              {/* Objective Lenses */}
+              <rect x="88" y="84" width="7" height="16" rx="2" fill="#cbd5e1" />
+              <rect x="99" y="84" width="8" height="20" rx="2" fill="#f59e0b" />
+            </g>
+          </svg>
+        )}
+
+        {/* 13. GLOBE */}
+        {objectId === 'globe' && (
+          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-float-slow">
+            <defs>
+              <radialGradient id="oceanGrad" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="50%" stopColor="#0284c7" />
+                <stop offset="100%" stopColor="#0369a1" />
+              </radialGradient>
+            </defs>
+            {/* Stand Base */}
+            <ellipse cx="100" cy="172" rx="38" ry="10" fill="#334155" />
+            <rect x="96" y="148" width="8" height="26" fill="#64748b" />
+            {/* Meridian Arc Ring */}
+            <path d="M52 100 C52 45, 148 45, 148 100 C148 135, 125 158, 100 158" stroke="#94a3b8" strokeWidth="8" strokeLinecap="round" fill="none" transform="rotate(-23.5 100 100)" />
+            {/* Sphere Globe Body */}
+            <g transform="rotate(-23.5 100 100)">
+              <circle cx="100" cy="100" r="46" fill="url(#oceanGrad)" />
+              {/* Latitude / Longitude grid lines */}
+              <ellipse cx="100" cy="100" rx="46" ry="18" fill="none" stroke="#ffffff" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
+              <line x1="100" y1="54" x2="100" y2="146" stroke="#ffffff" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
+              {/* Green Continents Silhouette */}
+              <path d="M85 75 Q95 70, 105 78 Q115 85, 108 95 Q98 100, 90 92 Z" fill="#10b981" />
+              <path d="M110 95 Q125 90, 132 105 Q125 120, 115 115 Z" fill="#10b981" />
+              <path d="M75 105 Q85 100, 92 115 Q82 128, 72 120 Z" fill="#10b981" />
+              {/* Specular Glare */}
+              <ellipse cx="85" cy="80" rx="14" ry="20" fill="#ffffff" opacity="0.25" transform="rotate(-25 85 80)" />
+            </g>
+          </svg>
+        )}
+
+        {/* 14. GUITAR */}
+        {objectId === 'guitar' && (
+          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-float-slow">
+            <defs>
+              <radialGradient id="guitarBody" cx="45%" cy="50%" r="65%">
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="45%" stopColor="#d97706" />
+                <stop offset="85%" stopColor="#9a3412" />
+                <stop offset="100%" stopColor="#451a03" />
+              </radialGradient>
+            </defs>
+            <g transform="rotate(-30 100 100)">
+              {/* Long Fretboard Neck */}
+              <rect x="94" y="22" width="12" height="75" fill="#451a03" />
+              {/* Headstock */}
+              <polygon points="92,12 108,12 107,24 93,24" fill="#78350f" />
+              {/* Tuning Pegs */}
+              <circle cx="88" cy="15" r="2.5" fill="#fbbf24" />
+              <circle cx="88" cy="21" r="2.5" fill="#fbbf24" />
+              <circle cx="112" cy="15" r="2.5" fill="#fbbf24" />
+              <circle cx="112" cy="21" r="2.5" fill="#fbbf24" />
+              {/* Frets Wire */}
+              <line x1="94" y1="35" x2="106" y2="35" stroke="#cbd5e1" strokeWidth="1" />
+              <line x1="94" y1="50" x2="106" y2="50" stroke="#cbd5e1" strokeWidth="1" />
+              <line x1="94" y1="65" x2="106" y2="65" stroke="#cbd5e1" strokeWidth="1" />
+              <line x1="94" y1="80" x2="106" y2="80" stroke="#cbd5e1" strokeWidth="1" />
+              {/* Hourglass Acoustic Body */}
+              <path d="M100 90 C120 90, 130 102, 126 116 C122 126, 134 140, 132 154 C130 172, 115 178, 100 178 C85 178, 70 172, 68 154 C66 140, 78 126, 74 116 C70 102, 80 90, 100 90 Z" fill="url(#guitarBody)" />
+              {/* Soundhole Ring & Rosette */}
+              <circle cx="100" cy="124" r="14" fill="#1e293b" stroke="#fde68a" strokeWidth="2.5" />
+              {/* Wooden Bridge */}
+              <rect x="90" y="152" width="20" height="7" rx="2" fill="#1e293b" />
+              {/* 6 Steel Strings */}
+              <line x1="97" y1="22" x2="97" y2="154" stroke="#ffffff" strokeWidth="1" opacity="0.9" />
+              <line x1="100" y1="22" x2="100" y2="154" stroke="#ffffff" strokeWidth="1" opacity="0.9" />
+              <line x1="103" y1="22" x2="103" y2="154" stroke="#ffffff" strokeWidth="1" opacity="0.9" />
+            </g>
+          </svg>
+        )}
+
+        {/* 15. TELESCOPE */}
+        {objectId === 'telescope' && (
+          <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-xl animate-float-slow">
+            <defs>
+              <linearGradient id="telescopeTube" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#1e3a8a" />
+                <stop offset="45%" stopColor="#3b82f6" />
+                <stop offset="85%" stopColor="#60a5fa" />
+                <stop offset="100%" stopColor="#1e40af" />
+              </linearGradient>
+            </defs>
+            {/* Tripod Legs */}
+            <line x1="100" y1="125" x2="52" y2="182" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
+            <line x1="100" y1="125" x2="100" y2="186" stroke="#475569" strokeWidth="5" strokeLinecap="round" />
+            <line x1="100" y1="125" x2="148" y2="182" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
+            {/* Tripod Mounting Head & Joint */}
+            <circle cx="100" cy="125" r="9" fill="#1e293b" stroke="#94a3b8" strokeWidth="2" />
+            {/* Main Optical Tube Tilted towards Stars (40 deg) */}
+            <g transform="rotate(-40 100 115)">
+              {/* Wide Front Objective Hood */}
+              <rect x="75" y="32" width="50" height="20" rx="5" fill="#1e293b" />
+              <ellipse cx="100" cy="32" rx="25" ry="8" fill="#38bdf8" />
+              <ellipse cx="100" cy="32" rx="20" ry="5" fill="#7dd3fc" opacity="0.6" />
+              {/* Main Barrel Cylinder */}
+              <rect x="80" y="50" width="40" height="85" rx="4" fill="url(#telescopeTube)" />
+              {/* Gold Accent Ring */}
+              <rect x="79" y="85" width="42" height="6" fill="#fbbf24" />
+              {/* Eyepiece Diagonal Mount */}
+              <rect x="88" y="135" width="24" height="20" rx="3" fill="#1e293b" />
+              <rect x="94" y="155" width="12" height="18" rx="2" fill="#cbd5e1" />
+              {/* Finder Scope attached on top */}
+              <rect x="68" y="60" width="10" height="35" rx="3" fill="#0f172a" />
+              <circle cx="73" cy="60" r="6" fill="#38bdf8" />
+            </g>
+          </svg>
+        )}
       </div>
     </div>
   );

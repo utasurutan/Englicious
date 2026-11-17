@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Flame, Zap, Volume2, VolumeX, Sparkles, BookOpen, Layers, 
-  Award, BarChart3, Trophy, ChevronDown, Check, Globe
+  Award, BarChart3, Trophy, ChevronDown, Check, Globe, FileText
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { sounds } from '../utils/sound';
@@ -15,6 +15,7 @@ interface Props {
   onOpenLeaderboard?: () => void;
   onOpenCertificate?: () => void;
   onOpenSpeedChallenge?: () => void;
+  onOpenTeacherReport?: () => void;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -25,7 +26,8 @@ export const Navbar: React.FC<Props> = ({
   onToggleSound,
   onOpenLeaderboard,
   onOpenCertificate,
-  onOpenSpeedChallenge
+  onOpenSpeedChallenge,
+  onOpenTeacherReport
 }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isPracticeDropdownOpen, setIsPracticeDropdownOpen] = useState(false);
@@ -265,6 +267,26 @@ export const Navbar: React.FC<Props> = ({
                     >
                       <Award className="w-4 h-4 text-brand-600" />
                       <span>Verified Certificate</span>
+                    </button>
+                  )}
+
+                  {/* Teacher Report & Evaluation Gradebook */}
+                  {onOpenTeacherReport && (
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        setIsProfileOpen(false);
+                        onOpenTeacherReport();
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-mint-800 bg-mint-50/80 hover:bg-mint-100 transition-colors flex items-center justify-between group"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-mint-600" />
+                        <span>Lembar Penilaian Guru</span>
+                      </div>
+                      <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-mint-600 text-white shadow-soft-sm">
+                        PDF
+                      </span>
                     </button>
                   )}
 
