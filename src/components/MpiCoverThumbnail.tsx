@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Play, Target, BookOpen, Info, Volume2, VolumeX, 
-  ArrowRight, Sparkles, X, FileText, Mic, CheckCircle2, Award
+  ArrowRight, Sparkles, X, FileText, Mic, Award
 } from 'lucide-react';
 import { sounds } from '../utils/sound';
 import { SpeechService } from '../utils/speech';
@@ -133,54 +133,78 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
       </header>
 
       {/* MAIN COVER THUMBNAIL CONTAINER */}
-      <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 my-auto z-10">
+      <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 my-auto z-10">
         <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 bg-white shadow-soft-xl p-6 sm:p-10 lg:p-12 text-center">
           {/* Internal gradient top rim */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600" />
 
-          <div className="space-y-6 max-w-3xl mx-auto">
+          <div className="space-y-7 max-w-3xl mx-auto">
             {/* Category Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-extrabold tracking-wide">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-extrabold tracking-wide shadow-soft-xs">
               <Sparkles className="w-3.5 h-3.5 text-brand-600" />
               <span>PROJECT MEDIA PEMBELAJARAN INTERAKTIF (MPI)</span>
             </div>
 
             {/* Main Subject Title */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-slate-900">
+            <div className="space-y-2.5">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] text-slate-900">
                 ENGLICIOUS
               </h1>
-              <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 mt-2.5">
+              <p className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600">
                 Media Pembelajaran Interaktif Bahasa Inggris Berbasis Web
               </p>
-              <p className="text-xs sm:text-sm text-slate-600 mt-3 max-w-2xl leading-relaxed mx-auto">
-                Media multimedia memadukan pengenalan objek 3D interaktif, modul teori PDF, bank latihan 20+ soal per bab, latihan drag & drop, waveform listening, serta instrumen penilaian guru.
+              <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed mx-auto pt-1 font-medium">
+                Media multimedia memadukan pengenalan kosa kata 3D, modul teori PDF interaktif, bank latihan 20+ soal per bab, latihan drag & drop, waveform listening, serta instrumen penilaian guru.
               </p>
             </div>
 
-            {/* Curriculum & Developer Meta Card */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2 text-left">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang (Author)</p>
-                <p className="text-sm font-extrabold text-slate-900 mt-0.5">Sultan</p>
-                <p className="text-[10px] text-brand-600 font-bold bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-full inline-block mt-1">Project MPI Siswa</p>
+            {/* Curriculum & Developer Meta Card (Neat 3-Column Symmetrical Grid) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left">
+              {/* 1. Pengembang */}
+              <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-soft-xs flex items-center gap-3.5 hover:border-brand-300 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-brand-50 border border-brand-200/80 flex items-center justify-center text-brand-600 flex-shrink-0">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang (Author)</p>
+                  <p className="text-sm font-black text-slate-900 truncate">Sultan</p>
+                  <span className="text-[10px] text-brand-600 font-bold bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                    Project MPI Siswa
+                  </span>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Standar Kurikulum</p>
-                <p className="text-sm font-extrabold text-slate-900 mt-0.5">CEFR A1 - C2</p>
-                <p className="text-[10px] text-mint-700 font-bold bg-mint-50 border border-mint-200/60 px-2 py-0.5 rounded-full inline-block mt-1">Kurikulum Merdeka</p>
+              {/* 2. Standar Kurikulum */}
+              <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-soft-xs flex items-center gap-3.5 hover:border-mint-300 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-mint-50 border border-mint-200/80 flex items-center justify-center text-mint-600 flex-shrink-0">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Standar Kurikulum</p>
+                  <p className="text-sm font-black text-slate-900 truncate">CEFR A1 – C2</p>
+                  <span className="text-[10px] text-mint-700 font-bold bg-mint-50 border border-mint-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                    Kurikulum Merdeka
+                  </span>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mata Pelajaran</p>
-                <p className="text-sm font-extrabold text-slate-900 mt-0.5">Bahasa Inggris</p>
-                <p className="text-[10px] text-amber-700 font-bold bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full inline-block mt-1">6 Keterampilan Inti</p>
+              {/* 3. Mata Pelajaran */}
+              <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 shadow-soft-xs flex items-center gap-3.5 hover:border-amber-300 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-600 flex-shrink-0">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mata Pelajaran</p>
+                  <p className="text-sm font-black text-slate-900 truncate">Bahasa Inggris</p>
+                  <span className="text-[10px] text-amber-700 font-bold bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">
+                    6 Keterampilan Inti
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* PRIMARY CALL TO ACTION BUTTON */}
-            <div className="pt-3 flex flex-col items-center justify-center">
+            <div className="pt-2 flex flex-col items-center justify-center">
               <button
                 onClick={handleStart}
                 className="w-full sm:w-auto px-10 py-4.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-base shadow-glow-brand hover:shadow-glow-brand transition-all flex items-center justify-center gap-3.5 active:scale-95 group"
@@ -191,46 +215,57 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
                 <span>MULAI PEMBELAJARAN</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
               </button>
-              <p className="text-[11px] text-slate-400 mt-2">
-                Klik untuk mengatur preferensi belajar dan masuk ke dashboard
+              <p className="text-xs text-slate-400 mt-2.5 font-medium flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-brand-500" />
+                <span>Klik untuk mengatur preferensi belajar dan masuk ke dashboard</span>
               </p>
             </div>
 
-            {/* TEACHER EVALUATION & STANDARD MPI BUTTONS */}
-            <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2 text-xs">
-              {onOpenTeacherReport && (
+            {/* TEACHER EVALUATION & STANDARD MPI BUTTONS (Balanced 4-Column Grid) */}
+            <div className="pt-6 border-t border-slate-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                {/* 1. Lembar Penilaian Guru */}
+                {onOpenTeacherReport && (
+                  <button
+                    onClick={() => { sounds.playClick(); onOpenTeacherReport(); }}
+                    className="p-3 rounded-2xl bg-mint-50/80 hover:bg-mint-100 border border-mint-200/90 text-mint-800 transition-all flex flex-col sm:flex-row items-center justify-center gap-2 font-bold shadow-soft-xs hover:-translate-y-0.5 group"
+                    title="Buka Lembar Penilaian Guru format PDF"
+                  >
+                    <FileText className="w-4 h-4 text-mint-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <span className="text-center sm:text-left leading-tight">Penilaian Guru (PDF)</span>
+                  </button>
+                )}
+
+                {/* 2. Tujuan Pembelajaran (CP/TP) */}
                 <button
-                  onClick={() => { sounds.playClick(); onOpenTeacherReport(); }}
-                  className="px-3.5 py-2 rounded-xl bg-mint-50 hover:bg-mint-100 border border-mint-200 text-mint-800 transition-colors flex items-center gap-1.5 font-bold shadow-soft-xs"
+                  onClick={() => handleOpenModal('objectives')}
+                  className="p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-all flex flex-col sm:flex-row items-center justify-center gap-2 font-semibold shadow-soft-xs hover:-translate-y-0.5 group"
+                  title="Lihat Capaian & Tujuan Pembelajaran"
                 >
-                  <FileText className="w-3.5 h-3.5 text-mint-600" />
-                  <span>Lembar Penilaian Guru (Grade Report)</span>
+                  <Target className="w-4 h-4 text-brand-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-center sm:text-left leading-tight">Tujuan Belajar (CP/TP)</span>
                 </button>
-              )}
 
-              <button
-                onClick={() => handleOpenModal('objectives')}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-              >
-                <Target className="w-3.5 h-3.5 text-brand-600" />
-                <span>Tujuan Pembelajaran (CP/TP)</span>
-              </button>
+                {/* 3. Petunjuk Penggunaan */}
+                <button
+                  onClick={() => handleOpenModal('guide')}
+                  className="p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-all flex flex-col sm:flex-row items-center justify-center gap-2 font-semibold shadow-soft-xs hover:-translate-y-0.5 group"
+                  title="Lihat Petunjuk Penggunaan Media"
+                >
+                  <BookOpen className="w-4 h-4 text-indigo-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-center sm:text-left leading-tight">Petunjuk Penggunaan</span>
+                </button>
 
-              <button
-                onClick={() => handleOpenModal('guide')}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Petunjuk Penggunaan</span>
-              </button>
-
-              <button
-                onClick={() => handleOpenModal('about')}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-              >
-                <Info className="w-3.5 h-3.5 text-amber-600" />
-                <span>Info Media & Profil</span>
-              </button>
+                {/* 4. Info Media & Profil */}
+                <button
+                  onClick={() => handleOpenModal('about')}
+                  className="p-3 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-all flex flex-col sm:flex-row items-center justify-center gap-2 font-semibold shadow-soft-xs hover:-translate-y-0.5 group"
+                  title="Informasi Pengembang dan Media"
+                >
+                  <Info className="w-4 h-4 text-amber-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <span className="text-center sm:text-left leading-tight">Info Media & Profil</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
