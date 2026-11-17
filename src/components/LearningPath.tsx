@@ -6,17 +6,24 @@ import {
 import { CURRICULA, PathNode } from '../data/curriculum';
 import { Lesson, SkillCategory } from '../types';
 import { LearningMaterialsView } from './LearningMaterialsView';
+import { PdfMaterialViewerModal } from './PdfMaterialViewerModal';
+import { PDF_MATERIALS, PdfDocumentData } from '../data/pdfMaterials';
 import { sounds } from '../utils/sound';
 
 interface Props {
   lessons: Lesson[];
   onStartLesson: (lesson: Lesson) => void;
+  onRewardXp?: (xp: number) => void;
 }
 
-export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
+export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson, onRewardXp }) => {
   const [mainView, setMainView] = useState<'path' | 'materials'>('path');
   const [selectedLevel, setSelectedLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Intermediate');
   const [selectedSkill, setSelectedSkill] = useState<string>('All');
+  
+  // PDF Document Viewer State
+  const [selectedPdfDoc, setSelectedPdfDoc] = useState<PdfDocumentData | null>(null);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
   const curriculum = CURRICULA[selectedLevel];
 
@@ -32,6 +39,16 @@ export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
       return;
     }
     sounds.playClick();
+
+    if (node.nodeType === 'pdf-document' && node.pdfMaterialId) {
+      const doc = PDF_MATERIALS[node.pdfMaterialId];
+      if (doc) {
+        setSelectedPdfDoc(doc);
+        setIsPdfModalOpen(true);
+        return;
+      }
+    }
+
     const targetLesson = lessons.find(l => l.id === node.lessonId) || lessons[0];
     onStartLesson(targetLesson);
   };
@@ -185,12 +202,26 @@ export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
                     ? 'bg-mint-50/40 border-mint-200 shadow-soft-sm'
                     : 'bg-white/80 border-slate-200 shadow-soft-sm'
                 }`}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                      isCompleted ? 'bg-mint-100 text-mint-800' : isCurrent ? 'bg-brand-100 text-brand-800' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {node.category}
-                    </span>
+                  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        node.nodeType === 'pdf-document'
+                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                          : isCompleted 
+                          ? 'bg-mint-100 text-mint-800' 
+                          : isCurrent 
+                          ? 'bg-brand-100 text-brand-800' 
+                          : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {node.nodeType === 'pdf-document' ? '📑 E-Book PDF' : node.category}
+                      </span>
+
+                      {node.questionsCount && (
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/80">
+                          🎯 {node.questionsCount} Latihan Soal
+                        </span>
+                      )}
+                    </div>
 
                     <span className="text-xs font-bold text-slate-400">
                       +{node.xpReward} XP
@@ -244,6 +275,18 @@ export const LearningPath: React.FC<Props> = ({ lessons, onStartLesson }) => {
       </div>
     </div>
   )}
+
+    {/* Interactive PDF Document Viewer Modal */}
+    <PdfMaterialViewerModal
+      isOpen={isPdfModalOpen}
+      onClose={() => setIsPdfModalOpen(false)}
+      document={selectedPdfDoc}
+      onMarkCompleted={(xpEarned) => {
+        if (onRewardXp) {
+          onRewardXp(xpEarned);
+        }
+      }}
+    />
 </div>
   );
 };

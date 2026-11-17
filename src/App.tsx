@@ -68,10 +68,22 @@ export const App: React.FC = () => {
 
   // Lessons state with progress tracking
   const [lessons, setLessons] = useState<Lesson[]>(() => {
-    const saved = localStorage.getItem('englicious_lessons_state');
+    const saved = localStorage.getItem('englicious_lessons_state_v3');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved) as Lesson[];
+        return SAMPLE_LESSONS.map(sample => {
+          const found = parsed.find(p => p.id === sample.id);
+          if (found) {
+            return {
+              ...sample,
+              progressPercent: found.progressPercent ?? sample.progressPercent,
+              completed: found.completed ?? sample.completed,
+              unlocked: found.unlocked ?? sample.unlocked
+            };
+          }
+          return sample;
+        });
       } catch {
         // fallback
       }
@@ -92,7 +104,7 @@ export const App: React.FC = () => {
 
   // Save lessons state changes
   useEffect(() => {
-    localStorage.setItem('englicious_lessons_state', JSON.stringify(lessons));
+    localStorage.setItem('englicious_lessons_state_v3', JSON.stringify(lessons));
   }, [lessons]);
 
   const handleToggleSound = () => {
@@ -227,6 +239,7 @@ export const App: React.FC = () => {
           <LearningPath
             lessons={lessons}
             onStartLesson={handleStartLesson}
+            onRewardXp={handleRewardXp}
           />
         )}
 

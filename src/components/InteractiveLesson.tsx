@@ -12,6 +12,7 @@ import { ListenArrangeActivity } from './activities/ListenArrangeActivity';
 import { ReadingActivity } from './activities/ReadingActivity';
 import { SpeakingActivity } from './activities/SpeakingActivity';
 import { VisualObjectActivity } from './activities/VisualObjectActivity';
+import { MultipleChoiceActivity } from './activities/MultipleChoiceActivity';
 import { sounds } from '../utils/sound';
 
 interface Props {
@@ -143,6 +144,12 @@ export const InteractiveLesson: React.FC<Props> = ({ lesson, onExit, onLessonCom
             )}
             {currentActivity.data.kind === 'fill-blank' && (
               <FillBlankActivity
+                data={currentActivity.data.data}
+                onComplete={() => handleNextActivity(currentActivity.xpValue)}
+              />
+            )}
+            {currentActivity.data.kind === 'multiple-choice' && (
+              <MultipleChoiceActivity
                 data={currentActivity.data.data}
                 onComplete={() => handleNextActivity(currentActivity.xpValue)}
               />
