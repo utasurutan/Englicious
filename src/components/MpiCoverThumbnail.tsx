@@ -1,54 +1,29 @@
 import React, { useState } from 'react';
 import { 
   Play, Target, BookOpen, Info, Volume2, VolumeX, 
-  ArrowRight, Sparkles, CheckCircle2, Award, 
-  X, ChevronLeft, ChevronRight, FileText, Mic, Sliders
+  ArrowRight, Sparkles, X, FileText, Mic, CheckCircle2, Award
 } from 'lucide-react';
-import { VisualObjectId } from '../types';
-import { VisualObjectRenderer } from './activities/VisualObjectRenderer';
 import { sounds } from '../utils/sound';
 import { SpeechService } from '../utils/speech';
 
 interface Props {
   onStartLearning: () => void;
-  onExploreCourses: () => void;
-  onOpenMaterials?: () => void;
-  onStart3dQuiz?: () => void;
+  onExploreCourses?: () => void;
   onOpenTeacherReport?: () => void;
   onSkipToDashboard?: () => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
 }
 
-const SHOWCASE_OBJECTS: Array<{ id: VisualObjectId; name: string; phonetic: string; meaning: string }> = [
-  { id: 'apple', name: 'Apple', phonetic: '/ˈæp.əl/', meaning: 'Apel' },
-  { id: 'pencil', name: 'Pencil', phonetic: '/ˈpen.səl/', meaning: 'Pensil' },
-  { id: 'microscope', name: 'Microscope', phonetic: '/ˈmaɪ.krə.skoʊp/', meaning: 'Mikroskop' },
-  { id: 'globe', name: 'Globe', phonetic: '/ɡloʊb/', meaning: 'Bola Dunia' },
-  { id: 'guitar', name: 'Guitar', phonetic: '/ɡɪˈtɑːr/', meaning: 'Gitar Akustik' },
-  { id: 'telescope', name: 'Telescope', phonetic: '/ˈtel.ə.skoʊp/', meaning: 'Teleskop Bintang' },
-  { id: 'coffee', name: 'Coffee Mug', phonetic: '/ˈkɒf.i mʌɡ/', meaning: 'Cangkir Kopi' },
-  { id: 'airplane', name: 'Airplane', phonetic: '/ˈeə.pleɪn/', meaning: 'Pesawat Terbang' },
-  { id: 'headphones', name: 'Headphones', phonetic: '/ˈhɛd.foʊnz/', meaning: 'Headphone' },
-  { id: 'backpack', name: 'Backpack', phonetic: '/ˈbæk.pæk/', meaning: 'Ransel' },
-  { id: 'car', name: 'Electric Car', phonetic: '/kɑːr/', meaning: 'Mobil' },
-  { id: 'clock', name: 'Alarm Clock', phonetic: '/əˈlɑːm klɒk/', meaning: 'Jam Beker' }
-];
-
 export const MpiCoverThumbnail: React.FC<Props> = ({
   onStartLearning,
-  onOpenMaterials,
-  onStart3dQuiz,
   onOpenTeacherReport,
   onSkipToDashboard,
   soundEnabled,
   onToggleSound
 }) => {
   const [activeModal, setActiveModal] = useState<'objectives' | 'guide' | 'about' | null>(null);
-  const [currentShowcaseIdx, setCurrentShowcaseIdx] = useState(0);
   const [isSpeakingIntro, setIsSpeakingIntro] = useState(false);
-
-  const currentObj = SHOWCASE_OBJECTS[currentShowcaseIdx];
 
   const handleStart = () => {
     sounds.playClick();
@@ -69,21 +44,6 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
     setActiveModal(modal);
   };
 
-  const handleNextObject = () => {
-    sounds.playClick();
-    setCurrentShowcaseIdx(prev => (prev + 1) % SHOWCASE_OBJECTS.length);
-  };
-
-  const handlePrevObject = () => {
-    sounds.playClick();
-    setCurrentShowcaseIdx(prev => (prev - 1 + SHOWCASE_OBJECTS.length) % SHOWCASE_OBJECTS.length);
-  };
-
-  const handlePronounceShowcase = () => {
-    sounds.playClick();
-    SpeechService.speak(`${currentObj.name}. In Indonesian, it means ${currentObj.meaning}.`);
-  };
-
   const handlePlayVoiceover = () => {
     sounds.playClick();
     if (isSpeakingIntro) {
@@ -94,7 +54,7 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
 
     setIsSpeakingIntro(true);
     SpeechService.speak(
-      "Selamat datang di Englicious, Media Pembelajaran Interaktif Bahasa Inggris karya Sultan. Media ini dirancang khusus untuk pembelajaran mandiri dan kelas, lengkap dengan objek 3D interaktif, modul teori mendalam, dan evaluasi resmi. Silakan klik Mulai Pembelajaran untuk mengatur preferensi belajar Anda.",
+      "Selamat datang di Englicious, Media Pembelajaran Interaktif Bahasa Inggris karya Sultan. Media ini memadukan pengenalan kosa kata 3D, modul teori tata bahasa, latihan drag and drop, serta instrumen evaluasi guru. Silakan klik Mulai Pembelajaran untuk mengatur preferensi belajar Anda.",
       1.0,
       1.0,
       () => {
@@ -173,187 +133,104 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
       </header>
 
       {/* MAIN COVER THUMBNAIL CONTAINER */}
-      <main className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 my-auto z-10">
-        <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 bg-white shadow-soft-xl p-6 sm:p-10 lg:p-12">
+      <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 my-auto z-10">
+        <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 bg-white shadow-soft-xl p-6 sm:p-10 lg:p-12 text-center">
           {/* Internal gradient top rim */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Column: Title & Metadata */}
-            <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
-              {/* Category Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-extrabold tracking-wide">
-                <Sparkles className="w-3.5 h-3.5 text-brand-600" />
-                <span>PROJECT MEDIA PEMBELAJARAN INTERAKTIF (MPI)</span>
+          <div className="space-y-6 max-w-3xl mx-auto">
+            {/* Category Pill */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200/80 text-brand-700 text-xs font-extrabold tracking-wide">
+              <Sparkles className="w-3.5 h-3.5 text-brand-600" />
+              <span>PROJECT MEDIA PEMBELAJARAN INTERAKTIF (MPI)</span>
+            </div>
+
+            {/* Main Subject Title */}
+            <div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-slate-900">
+                ENGLICIOUS
+              </h1>
+              <p className="text-lg sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 mt-2.5">
+                Media Pembelajaran Interaktif Bahasa Inggris Berbasis Web
+              </p>
+              <p className="text-xs sm:text-sm text-slate-600 mt-3 max-w-2xl leading-relaxed mx-auto">
+                Media multimedia memadukan pengenalan objek 3D interaktif, modul teori PDF, bank latihan 20+ soal per bab, latihan drag & drop, waveform listening, serta instrumen penilaian guru.
+              </p>
+            </div>
+
+            {/* Curriculum & Developer Meta Card */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2 text-left">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang (Author)</p>
+                <p className="text-sm font-extrabold text-slate-900 mt-0.5">Sultan</p>
+                <p className="text-[10px] text-brand-600 font-bold bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-full inline-block mt-1">Project MPI Siswa</p>
               </div>
 
-              {/* Main Subject Title */}
-              <div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-slate-900">
-                  ENGLICIOUS
-                </h1>
-                <p className="text-lg sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600 mt-2">
-                  Media Pembelajaran Interaktif Bahasa Inggris Berbasis Web
-                </p>
-                <p className="text-xs sm:text-sm text-slate-600 mt-2.5 max-w-xl leading-relaxed mx-auto lg:mx-0">
-                  Media multimedia memadukan pengenalan objek 3D interaktif, modul teori PDF, bank soal 20+ per bab, latihan drag & drop, waveform listening, serta instrumen penilaian guru.
-                </p>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Standar Kurikulum</p>
+                <p className="text-sm font-extrabold text-slate-900 mt-0.5">CEFR A1 - C2</p>
+                <p className="text-[10px] text-mint-700 font-bold bg-mint-50 border border-mint-200/60 px-2 py-0.5 rounded-full inline-block mt-1">Kurikulum Merdeka</p>
               </div>
 
-              {/* Curriculum & Developer Meta Card */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pengembang (Author)</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Sultan</p>
-                  <p className="text-[10px] text-brand-600 font-bold bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">Project MPI Siswa</p>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Standar Kurikulum</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">CEFR A1 - C2</p>
-                  <p className="text-[10px] text-mint-700 font-bold bg-mint-50 border border-mint-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">Kurikulum Merdeka</p>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left col-span-2 sm:col-span-1">
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mata Pelajaran</p>
-                  <p className="text-xs sm:text-sm font-extrabold text-slate-900 mt-0.5">Bahasa Inggris</p>
-                  <p className="text-[10px] text-amber-700 font-bold bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full inline-block mt-0.5">6 Keterampilan Inti</p>
-                </div>
-              </div>
-
-              {/* PRIMARY ACTION BUTTONS */}
-              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-                <button
-                  onClick={handleStart}
-                  className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm shadow-glow-brand transition-all flex items-center justify-center gap-3 active:scale-95 group"
-                >
-                  <div className="w-7 h-7 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
-                  </div>
-                  <div className="text-left">
-                    <p className="leading-none">MULAI PEMBELAJARAN</p>
-                    <p className="text-[10px] font-semibold text-blue-100 mt-0.5">Atur Preferensi Belajar Anda</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform ml-1" />
-                </button>
-
-                {onOpenMaterials && (
-                  <button
-                    onClick={() => { sounds.playClick(); onOpenMaterials(); }}
-                    className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm shadow-soft-sm transition-all flex items-center justify-center gap-2 active:scale-95"
-                  >
-                    <BookOpen className="w-4 h-4 text-brand-600" />
-                    <span>Materi & Teori</span>
-                  </button>
-                )}
-
-                {onStart3dQuiz && (
-                  <button
-                    onClick={() => { sounds.playClick(); onStart3dQuiz(); }}
-                    className="w-full sm:w-auto px-5 py-4 rounded-2xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 font-bold text-xs sm:text-sm shadow-soft-sm transition-all flex items-center justify-center gap-2 active:scale-95"
-                  >
-                    <Sparkles className="w-4 h-4 text-indigo-600" />
-                    <span>Latihan Objek 3D</span>
-                  </button>
-                )}
-              </div>
-
-              {/* TEACHER EVALUATION & STANDARD MPI BUTTONS */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1 text-xs">
-                {onOpenTeacherReport && (
-                  <button
-                    onClick={() => { sounds.playClick(); onOpenTeacherReport(); }}
-                    className="px-3.5 py-2 rounded-xl bg-mint-50 hover:bg-mint-100 border border-mint-200 text-mint-800 transition-colors flex items-center gap-1.5 font-bold shadow-soft-xs"
-                  >
-                    <FileText className="w-3.5 h-3.5 text-mint-600" />
-                    <span>Lembar Penilaian Guru (Grade Report)</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleOpenModal('objectives')}
-                  className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-                >
-                  <Target className="w-3.5 h-3.5 text-brand-600" />
-                  <span>Tujuan Pembelajaran (CP/TP)</span>
-                </button>
-
-                <button
-                  onClick={() => handleOpenModal('guide')}
-                  className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Petunjuk Penggunaan</span>
-                </button>
-
-                <button
-                  onClick={() => handleOpenModal('about')}
-                  className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
-                >
-                  <Info className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Info Media & Profil</span>
-                </button>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-soft-xs">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mata Pelajaran</p>
+                <p className="text-sm font-extrabold text-slate-900 mt-0.5">Bahasa Inggris</p>
+                <p className="text-[10px] text-amber-700 font-bold bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full inline-block mt-1">6 Keterampilan Inti</p>
               </div>
             </div>
 
-            {/* Right Column: Interactive Visual 3D Showcase Graphic */}
-            <div className="lg:col-span-5 relative flex items-center justify-center">
-              {/* Outer decorative card frame matching web light palette */}
-              <div className="w-full max-w-sm aspect-square rounded-3xl bg-gradient-to-tr from-brand-50/80 via-white to-indigo-50/60 p-3 border border-slate-200/90 shadow-soft-lg relative flex items-center justify-center overflow-hidden group">
-                {/* Soft backdrop glow */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-blue-50/20 to-indigo-50/30 pointer-events-none" />
+            {/* PRIMARY CALL TO ACTION BUTTON */}
+            <div className="pt-3 flex flex-col items-center justify-center">
+              <button
+                onClick={handleStart}
+                className="w-full sm:w-auto px-10 py-4.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-brand-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-base shadow-glow-brand hover:shadow-glow-brand transition-all flex items-center justify-center gap-3.5 active:scale-95 group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Play className="w-4 h-4 fill-white ml-0.5" />
+                </div>
+                <span>MULAI PEMBELAJARAN</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+              </button>
+              <p className="text-[11px] text-slate-400 mt-2">
+                Klik untuk mengatur preferensi belajar dan masuk ke dashboard
+              </p>
+            </div>
 
-                {/* 3D Showcase Navigation Arrows */}
+            {/* TEACHER EVALUATION & STANDARD MPI BUTTONS */}
+            <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-2 text-xs">
+              {onOpenTeacherReport && (
                 <button
-                  onClick={handlePrevObject}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 border border-slate-200/90 shadow-soft-sm transition-all active:scale-90"
-                  title="Objek 3D Sebelumnya"
+                  onClick={() => { sounds.playClick(); onOpenTeacherReport(); }}
+                  className="px-3.5 py-2 rounded-xl bg-mint-50 hover:bg-mint-100 border border-mint-200 text-mint-800 transition-colors flex items-center gap-1.5 font-bold shadow-soft-xs"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <FileText className="w-3.5 h-3.5 text-mint-600" />
+                  <span>Lembar Penilaian Guru (Grade Report)</span>
                 </button>
+              )}
 
-                <button
-                  onClick={handleNextObject}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 border border-slate-200/90 shadow-soft-sm transition-all active:scale-90"
-                  title="Objek 3D Selanjutnya"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+              <button
+                onClick={() => handleOpenModal('objectives')}
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
+              >
+                <Target className="w-3.5 h-3.5 text-brand-600" />
+                <span>Tujuan Pembelajaran (CP/TP)</span>
+              </button>
 
-                {/* Floating 3D Artwork */}
-                <div className="relative z-10 flex flex-col items-center justify-center">
-                  <div 
-                    onClick={handlePronounceShowcase}
-                    className="scale-105 sm:scale-120 mb-2 group-hover:scale-125 transition-transform duration-500 cursor-pointer"
-                    title="Klik untuk mendengarkan pengucapan kata"
-                  >
-                    <VisualObjectRenderer objectId={currentObj.id} rotation={{ x: 18, y: -25 }} />
-                  </div>
+              <button
+                onClick={() => handleOpenModal('guide')}
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Petunjuk Penggunaan</span>
+              </button>
 
-                  {/* Glass Tag below object with Audio Button */}
-                  <button
-                    onClick={handlePronounceShowcase}
-                    className="px-4 py-2.5 rounded-2xl bg-white/95 hover:bg-white backdrop-blur-md border border-slate-200/90 text-center shadow-soft-md mt-2 transition-all group flex items-center gap-2.5 active:scale-98"
-                  >
-                    <Volume2 className="w-4 h-4 text-brand-600 group-hover:scale-110 transition-transform" />
-                    <div className="text-left">
-                      <p className="text-xs font-black text-slate-900">{currentObj.name} <span className="font-mono text-slate-500 font-semibold">{currentObj.phonetic}</span></p>
-                      <p className="text-[10px] text-brand-600 font-bold">"{currentObj.meaning}" • 3D Visual Model ({currentShowcaseIdx + 1}/{SHOWCASE_OBJECTS.length})</p>
-                    </div>
-                  </button>
-                </div>
-
-                {/* Floating mini badges */}
-                <div className="absolute top-4 left-4 z-20 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/80 text-[10px] font-bold text-mint-700 flex items-center gap-1.5 shadow-soft-sm">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-mint-600" />
-                  <span>IELTS & TOEFL Ready</span>
-                </div>
-
-                <div className="absolute bottom-4 right-4 z-20 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/80 text-[10px] font-bold text-amber-700 flex items-center gap-1.5 shadow-soft-sm">
-                  <Award className="w-3.5 h-3.5 text-amber-500" />
-                  <span>15 Objek 3D Vektor</span>
-                </div>
-              </div>
+              <button
+                onClick={() => handleOpenModal('about')}
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors flex items-center gap-1.5 font-semibold shadow-soft-xs"
+              >
+                <Info className="w-3.5 h-3.5 text-amber-600" />
+                <span>Info Media & Profil</span>
+              </button>
             </div>
           </div>
         </div>

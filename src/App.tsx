@@ -208,11 +208,6 @@ export const App: React.FC = () => {
             onStartLearning={() => setIsOnboardingOpen(true)}
             onSkipToDashboard={() => setCurrentView('dashboard')}
             onExploreCourses={() => setCurrentView('learn')}
-            onOpenMaterials={() => setCurrentView('learn')}
-            onStart3dQuiz={() => {
-              const quiz = lessons.find(l => l.id === 'lesson-visual-objects') || lessons[0];
-              handleStartLesson(quiz);
-            }}
             onOpenTeacherReport={() => setIsTeacherReportOpen(true)}
             soundEnabled={soundEnabled}
             onToggleSound={handleToggleSound}
