@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Flame, Zap, Volume2, VolumeX, Sparkles, BookOpen, Layers, 
-  Award, BarChart3, Trophy, ChevronDown, Check, Globe, FileText
+  Award, BarChart3, Trophy, ChevronDown, Check, Globe, FileText, Sliders
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { sounds } from '../utils/sound';
@@ -16,6 +16,7 @@ interface Props {
   onOpenCertificate?: () => void;
   onOpenSpeedChallenge?: () => void;
   onOpenTeacherReport?: () => void;
+  onOpenPreferences?: () => void;
 }
 
 export const Navbar: React.FC<Props> = ({
@@ -27,7 +28,8 @@ export const Navbar: React.FC<Props> = ({
   onOpenLeaderboard,
   onOpenCertificate,
   onOpenSpeedChallenge,
-  onOpenTeacherReport
+  onOpenTeacherReport,
+  onOpenPreferences
 }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isPracticeDropdownOpen, setIsPracticeDropdownOpen] = useState(false);
@@ -267,6 +269,26 @@ export const Navbar: React.FC<Props> = ({
                     >
                       <Award className="w-4 h-4 text-brand-600" />
                       <span>Verified Certificate</span>
+                    </button>
+                  )}
+
+                  {/* Learning Preferences Modal Trigger */}
+                  {onOpenPreferences && (
+                    <button
+                      onClick={() => {
+                        sounds.playClick();
+                        setIsProfileOpen(false);
+                        onOpenPreferences();
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-brand-50 hover:text-brand-900 transition-colors flex items-center justify-between group"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Sliders className="w-4 h-4 text-brand-600" />
+                        <span>Preferensi Belajar</span>
+                      </div>
+                      <span className="text-[10px] text-brand-700 bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-full font-semibold">
+                        {user.level}
+                      </span>
                     </button>
                   )}
 

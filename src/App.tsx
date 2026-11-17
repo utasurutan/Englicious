@@ -196,6 +196,7 @@ export const App: React.FC = () => {
           onOpenCertificate={() => setIsCertificateOpen(true)}
           onOpenSpeedChallenge={() => setIsSpeedChallengeOpen(true)}
           onOpenTeacherReport={() => setIsTeacherReportOpen(true)}
+          onOpenPreferences={() => setIsOnboardingOpen(true)}
         />
       )}
 
@@ -204,7 +205,8 @@ export const App: React.FC = () => {
         {/* 0. Media Pembelajaran Interaktif (MPI) Cover / Thumbnail Awal */}
         {currentView === 'cover' && (
           <MpiCoverThumbnail
-            onStartLearning={() => setCurrentView('dashboard')}
+            onStartLearning={() => setIsOnboardingOpen(true)}
+            onSkipToDashboard={() => setCurrentView('dashboard')}
             onExploreCourses={() => setCurrentView('learn')}
             onOpenMaterials={() => setCurrentView('learn')}
             onStart3dQuiz={() => {
@@ -374,10 +376,15 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Onboarding Flow Modal */}
+      {/* Onboarding / Learning Preferences Flow Modal */}
       <OnboardingModal
         isOpen={isOnboardingOpen}
-        onClose={() => setIsOnboardingOpen(false)}
+        onClose={() => {
+          setIsOnboardingOpen(false);
+          if (currentView === 'cover') {
+            setCurrentView('dashboard');
+          }
+        }}
         onComplete={handleCompleteOnboarding}
       />
 
