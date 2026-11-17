@@ -11,6 +11,8 @@ interface Props {
   onExploreCourses?: () => void;
   onOpenTeacherReport?: () => void;
   onSkipToDashboard?: () => void;
+  hasCompletedPreferences?: boolean;
+  userLevel?: string;
   soundEnabled: boolean;
   onToggleSound: () => void;
 }
@@ -19,6 +21,8 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
   onStartLearning,
   onOpenTeacherReport,
   onSkipToDashboard,
+  hasCompletedPreferences = false,
+  userLevel,
   soundEnabled,
   onToggleSound
 }) => {
@@ -217,7 +221,11 @@ export const MpiCoverThumbnail: React.FC<Props> = ({
               </button>
               <p className="text-xs text-slate-400 mt-2.5 font-medium flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-                <span>Klik untuk mengatur preferensi belajar dan masuk ke dashboard</span>
+                <span>
+                  {hasCompletedPreferences
+                    ? `Lanjut belajar • Level ${userLevel || 'Intermediate'} (Klik untuk langsung ke dashboard)`
+                    : 'Klik untuk mengatur preferensi belajar dan masuk ke dashboard'}
+                </span>
               </p>
             </div>
 

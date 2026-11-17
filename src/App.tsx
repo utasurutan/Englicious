@@ -36,6 +36,11 @@ export const App: React.FC = () => {
   const [isSpeedChallengeOpen, setIsSpeedChallengeOpen] = useState(false);
   const [isTeacherReportOpen, setIsTeacherReportOpen] = useState(false);
 
+  // Track if user has ever completed/saved preferences
+  const [hasCompletedPreferences, setHasCompletedPreferences] = useState<boolean>(() => {
+    return localStorage.getItem('englicious_preferences_completed') === 'true';
+  });
+
   // Sound cues state
   const [soundEnabled, setSoundEnabled] = useState(true);
 
@@ -154,6 +159,8 @@ export const App: React.FC = () => {
       ...prev,
       ...updatedProfile
     }));
+    setHasCompletedPreferences(true);
+    localStorage.setItem('englicious_preferences_completed', 'true');
     setCurrentView('dashboard');
   };
 
@@ -205,10 +212,20 @@ export const App: React.FC = () => {
         {/* 0. Media Pembelajaran Interaktif (MPI) Cover / Thumbnail Awal */}
         {currentView === 'cover' && (
           <MpiCoverThumbnail
-            onStartLearning={() => setIsOnboardingOpen(true)}
+            onStartLearning={() => {
+              if (hasCompletedPreferences) {
+                sounds.playClick();
+                setCurrentView('dashboard');
+              } else {
+                sounds.playClick();
+                setIsOnboardingOpen(true);
+              }
+            }}
             onSkipToDashboard={() => setCurrentView('dashboard')}
             onExploreCourses={() => setCurrentView('learn')}
             onOpenTeacherReport={() => setIsTeacherReportOpen(true)}
+            hasCompletedPreferences={hasCompletedPreferences}
+            userLevel={user.level}
             soundEnabled={soundEnabled}
             onToggleSound={handleToggleSound}
           />
@@ -216,7 +233,15 @@ export const App: React.FC = () => {
 
         {currentView === 'landing' && (
           <LandingPage
-            onStartLearning={() => setIsOnboardingOpen(true)}
+            onStartLearning={() => {
+              if (hasCompletedPreferences) {
+                sounds.playClick();
+                setCurrentView('dashboard');
+              } else {
+                sounds.playClick();
+                setIsOnboardingOpen(true);
+              }
+            }}
             onExploreCourses={() => setCurrentView('learn')}
             onOpenExamPrep={() => setCurrentView('exam-prep')}
           />
@@ -376,6 +401,8 @@ export const App: React.FC = () => {
         isOpen={isOnboardingOpen}
         onClose={() => {
           setIsOnboardingOpen(false);
+          setHasCompletedPreferences(true);
+          localStorage.setItem('englicious_preferences_completed', 'true');
           if (currentView === 'cover') {
             setCurrentView('dashboard');
           }
