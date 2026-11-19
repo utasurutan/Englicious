@@ -1207,7 +1207,7 @@ export interface MockupTestCard {
   durationMinutes: number;
   questionCountLabel: string;
   badge: string;
-  difficulty: 'Official Standard' | 'Advanced Band 8+' | 'Corporate Benchmark';
+  difficulty: string;
   description: string;
   skills: string[];
 }
@@ -1215,17 +1215,30 @@ export interface MockupTestCard {
 export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
   IELTS: [
     {
-      id: 'ielts-mock-full',
+      id: 'ielts-mock-full-1',
       exam: 'IELTS',
       type: 'full',
-      title: 'IELTS on Computer: Full Academic Simulation',
+      title: 'IELTS on Computer: Full Academic Simulation 1',
       subtitle: 'Listening Parts 1-4 & Reading Passages 1-3 Terstandarisasi',
       durationMinutes: 25,
       questionCountLabel: '22 Soal Lengkap',
-      badge: 'Full CBT Simulation',
-      difficulty: 'Official Standard',
-      description: 'Simulasi lengkap ujian resmi IELTS on Computer mencakup 10 soal audio penutur asli dan 12 soal pemahaman bacaan akademik mendalam.',
+      badge: 'Full Mock Test 1',
+      difficulty: 'Official Standard (Band 6.5 - 7.5)',
+      description: 'Simulasi lengkap ujian resmi IELTS on Computer mencakup 10 soal audio penutur asli dan 12 soal pemahaman bacaan akademik mendalam dengan timer CBT dan sertifikat resmi TRF.',
       skills: ['Parts 1-4 Listening', 'Academic Passages 1-3', 'True/False/Not Given', 'Heading Matching']
+    },
+    {
+      id: 'ielts-mock-full-2',
+      exam: 'IELTS',
+      type: 'full',
+      title: 'IELTS on Computer: Cambridge Academic Challenge Set 2',
+      subtitle: 'Simulasi Penuh Tingkat Lanjut: High-Band Focus (Band 8.0 - 9.0)',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full Mock Test 2',
+      difficulty: 'Advanced Master (Band 8.0 - 9.0)',
+      description: 'Paket simulasi penuh kedua dengan perpaduan soal penalaran analitis, leksikal ilmiah tingkat tinggi, sintesis kuliah riset, dan bacaan sejarah metalurgi perunggu.',
+      skills: ['High-Band Analysis', 'Inference & Synthesis', 'Subtle Tone Distinctions', 'Complex Data Extraction']
     },
     {
       id: 'ielts-mock-listening',
@@ -1235,7 +1248,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Social Booking, Facility Tour, Research Debate, Marine Biology',
       durationMinutes: 12,
       questionCountLabel: '10 Soal Audio',
-      badge: 'Audio Lab CBT',
+      badge: 'Khusus Listening',
       difficulty: 'Official Standard',
       description: 'Latihan mandiri seksi Listening dengan 4 rekaman audio penutur asli: panggilan telepon, tur fasilitas, tutorial riset, dan kuliah biologi kelautan.',
       skills: ['Form Completion', 'Specific Figures', 'Speaker Stance', 'Lecture Synthesis']
@@ -1248,7 +1261,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Urban Microclimates, Bilingual Brain, Bronze Age Metallurgy',
       durationMinutes: 15,
       questionCountLabel: '12 Soal Teks',
-      badge: 'Reading Lab CBT',
+      badge: 'Khusus Reading',
       difficulty: 'Advanced Band 8+',
       description: '3 artikel jurnal ilmiah berstandar Cambridge IELTS: fenomena Urban Heat Island, neurobiologi bilingualisme, dan bukti arkeologi perunggu.',
       skills: ['Skimming & Scanning', 'True/False/Not Given', 'Lexical Context', 'Main Idea Matching']
@@ -1261,7 +1274,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Discursive Essay with Live Word Counter & Band 9.0 Benchmark',
       durationMinutes: 40,
       questionCountLabel: '1 Academic Essay (250+ Kata)',
-      badge: 'Interactive Writing',
+      badge: 'Khusus Writing',
       difficulty: 'Official Standard',
       description: 'Simulator menulis esai akademik resmi dengan editor teks, penghitung kata otomatis, kriteria penilaian resmi (TR, CC, LR, GRA), dan kunci jawaban model Band 9.0.',
       skills: ['Task Achievement', 'Coherence & Cohesion', 'Lexical Resource', 'Grammatical Accuracy']
@@ -1274,7 +1287,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: '3-Part Interview with AI Examiner Voice & Speech Evaluation',
       durationMinutes: 12,
       questionCountLabel: '3 Bagian Wawancara',
-      badge: 'Oral Interview',
+      badge: 'Khusus Speaking',
       difficulty: 'Official Standard',
       description: 'Wawancara tatap muka interaktif dengan suara penguji asli: pengenalan diri, kartu petunjuk (cue card) 2 menit, dan diskusi konseptual dua arah.',
       skills: ['Fluency & Coherence', 'Pronunciation', 'Lexical Variety', 'Elaborated Responses']
@@ -1282,17 +1295,30 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
   ],
   TOEFL: [
     {
-      id: 'toefl-mock-full',
+      id: 'toefl-mock-full-1',
       exam: 'TOEFL',
       type: 'full',
-      title: 'TOEFL iBT: Full Length University Mock Test',
-      subtitle: 'Academic Reading & Campus Listening Terstandarisasi',
+      title: 'TOEFL iBT: Full Length University Mock Test 1',
+      subtitle: 'Academic Reading & Campus Listening Terstandarisasi ETS',
       durationMinutes: 25,
       questionCountLabel: '22 Soal Lengkap',
-      badge: 'Full iBT Standard',
-      difficulty: 'Official Standard',
+      badge: 'Full Mock Test 1',
+      difficulty: 'Official Standard (Skor 90 - 100)',
       description: 'Simulasi lengkap ujian resmi ETS TOEFL iBT: bacaan evolusi biologi, peradaban hidrolik kuno, konsultasi penasihat akademik, dan kuliah astrofisika.',
       skills: ['Factual Information', 'Negative Factual (EXCEPT)', 'Lecture Comprehension', 'Inference & Purpose']
+    },
+    {
+      id: 'toefl-mock-full-2',
+      exam: 'TOEFL',
+      type: 'full',
+      title: 'TOEFL iBT: Ivy League Benchmark Simulation 2',
+      subtitle: 'Simulasi Penuh Tingkat Lanjut: High Score Target (105 - 120)',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full Mock Test 2',
+      difficulty: 'Advanced Elite (Skor 105 - 120)',
+      description: 'Paket simulasi penuh kedua dengan tantangan akademik tingkat tinggi berstandar universitas top dunia, menguji pemahaman konsep implisit dan sintesis sains.',
+      skills: ['Scientific Synthesizing', 'Rhetorical Purpose', 'Complex Reasoning', 'Advanced Lexicon']
     },
     {
       id: 'toefl-mock-reading',
@@ -1302,7 +1328,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Hawaiian Honeycreepers & Mesopotamian Hydraulic Civilization',
       durationMinutes: 15,
       questionCountLabel: '11 Soal Teks',
-      badge: 'Reading Lab iBT',
+      badge: 'Khusus Reading',
       difficulty: 'Advanced Band 8+',
       description: '2 bacaan universitas resmi: spesiasi radiasi adaptif burung finch Hawaii dan peran saluran irigasi dalam pembentukan hierarki birokrasi Mesopotamia.',
       skills: ['Vocabulary in Context', 'Negative Factual', 'Sentence Simplification', 'Rhetorical Purpose']
@@ -1315,7 +1341,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Academic Advising, Astrophysics, Library Microfilm, Bauhaus',
       durationMinutes: 14,
       questionCountLabel: '11 Soal Audio',
-      badge: 'Audio Lab iBT',
+      badge: 'Khusus Listening',
       difficulty: 'Official Standard',
       description: 'Dialog kampus dan kuliah dosen: beban 19 SKS ekonometrika, resonansi Sabuk Kuiper Neptunus-Pluto, preservasi mikrofilm, dan arsitektur Bauhaus.',
       skills: ['Main Idea & Purpose', 'Connecting Information', 'Speaker Attitude', 'Scientific Implication']
@@ -1328,7 +1354,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Interactive Forum Post with Peer Synthesis (100+ Words)',
       durationMinutes: 10,
       questionCountLabel: '1 Academic Post (100+ Kata)',
-      badge: 'Interactive Writing',
+      badge: 'Khusus Writing',
       difficulty: 'Official Standard',
       description: 'Tugas menulis resmi format baru TOEFL iBT: menanggapi pertanyaan dosen Dr. Diaz mengenai kuliah daring vs tatap muka dan mensintesis argumen mahasiswa.',
       skills: ['Academic Register', 'Synthesizing Views', 'Concise Development', 'Syntactic Precision']
@@ -1341,7 +1367,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Campus Announcement & Student Opinion (30s Prep, 60s Speak)',
       durationMinutes: 10,
       questionCountLabel: '1 Integrated Task',
-      badge: 'Audio & Speech',
+      badge: 'Khusus Speaking',
       difficulty: 'Official Standard',
       description: 'Tugas berbicara terpadu format ETS: membaca pengumuman renovasi gedung kampus, mendengarkan percakapan keberatan mahasiswa, dan memaparkan argumen.',
       skills: ['Delivery & Pronunciation', 'Topic Synthesis', 'Time Pacing', 'Spoken Coherence']
@@ -1349,17 +1375,30 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
   ],
   TOEIC: [
     {
-      id: 'toeic-mock-full',
+      id: 'toeic-mock-full-1',
       exam: 'TOEIC',
       type: 'full',
-      title: 'TOEIC Official Workplace Mock Test (Parts 1-7)',
+      title: 'TOEIC Official Workplace Mock Test 1 (Parts 1-7)',
       subtitle: 'Photographs, Q&A, Office Conversations, Grammar, Memos, Invoices',
       durationMinutes: 25,
       questionCountLabel: '22 Soal Lengkap',
-      badge: 'Full TOEIC CBT',
-      difficulty: 'Corporate Benchmark',
+      badge: 'Full Mock Test 1',
+      difficulty: 'Corporate Benchmark (785 - 900)',
       description: 'Simulasi lengkap ujian kompetensi bahasa Inggris dunia kerja ETS TOEIC Listening & Reading berstandar eksekutif perusahaan multinasional.',
       skills: ['Workplace Photos', 'Question-Response', 'Commercial Grammar', 'Double Passages']
+    },
+    {
+      id: 'toeic-mock-full-2',
+      exam: 'TOEIC',
+      type: 'full',
+      title: 'TOEIC Global Executive Mock Test 2',
+      subtitle: 'Simulasi Penuh Tingkat Lanjut: Gold Certificate Target (900 - 990)',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full Mock Test 2',
+      difficulty: 'Executive Gold (Skor 900+)',
+      description: 'Paket simulasi penuh kedua berfokus pada korespondensi rantai pasok global, negosiasi kontrak vendor internasional, dan kecepatan tata bahasa tinggi.',
+      skills: ['Executive Negotiations', 'Supply Chain Analytics', 'Complex PO Analysis', 'Fast Lexical Decisions']
     },
     {
       id: 'toeic-mock-listening',
@@ -1369,7 +1408,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Photos, Q&A, Tokyo Expo Dialogue, Airport Gate Announcement',
       durationMinutes: 12,
       questionCountLabel: '10 Soal Audio',
-      badge: 'Audio Lab CBT',
+      badge: 'Khusus Listening',
       difficulty: 'Corporate Benchmark',
       description: 'Seksi mendengarkan bisnis Parts 1-4: deskripsi visual foto rapat, respon logistik, panggilan telepon pengiriman kilat, dan pengumuman gerbang bandara.',
       skills: ['Part 1 Photos', 'Part 2 Q&A', 'Part 3 Conversations', 'Part 4 Short Talks']
@@ -1382,7 +1421,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Incomplete Sentences, Corporate Travel Policy, Purchase Order',
       durationMinutes: 15,
       questionCountLabel: '12 Soal Teks',
-      badge: 'Reading Lab CBT',
+      badge: 'Khusus Reading',
       difficulty: 'Corporate Benchmark',
       description: 'Materi bacaan korporat Parts 5-7: tata bahasa komersial, memo kebijakan perjalanan dinas, dan korespondensi keluhan pesanan barang PO #4489.',
       skills: ['Part 5 Incomplete Sentences', 'Part 6 Text Completion', 'Part 7 Double Passages', 'Contract Details']
@@ -1395,7 +1434,7 @@ export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
       subtitle: 'Speed Grammar Drill: Adverbs, Prepositions, Voice, Conditionals',
       durationMinutes: 8,
       questionCountLabel: '10 Soal Kilat',
-      badge: 'Speed Drill',
+      badge: 'Khusus Grammar Sprint',
       difficulty: 'Corporate Benchmark',
       description: 'Latihan kecepatan tinggi tata bahasa bisnis: kata keterangan, contingency plan, konjungsi kondisional, dan kata depan korporat.',
       skills: ['Speed Decision Making', 'Business Collocations', 'Grammar Accuracy', 'Time Pacing']

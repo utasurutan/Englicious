@@ -4,7 +4,7 @@ import {
   RotateCcw, Sparkles, Volume2, Play, Pause, AlertTriangle, ArrowRight, 
   BookOpen, Layers, BarChart3, Headphones, ShieldCheck, Check, 
   Printer, FileText, Send, Mic, MicOff, User, PenTool, ExternalLink, 
-  HelpCircle, X, Sparkle, RefreshCw 
+  HelpCircle, X, Sparkle, RefreshCw, Zap 
 } from 'lucide-react';
 import { ExamType, ExamPractice, ExamQuestion, ExamReport, UserProfile } from '../types';
 import { 
@@ -72,6 +72,10 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
 
   // Result Report
   const [report, setReport] = useState<ExamReport | null>(null);
+
+  // View Filter: Full Mock Tests vs Sectional Mock Tests
+  const [catalogTab, setCatalogTab] = useState<'all' | 'full' | 'sectional'>('full');
+  const [sectionalSkillFilter, setSectionalSkillFilter] = useState<'all' | 'listening' | 'reading' | 'writing' | 'speaking'>('all');
 
   // Candidate Profile Details
   const candidateName = user?.name || 'Sultan';
@@ -143,6 +147,21 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
   const examInfo = EXAM_INFOS[selectedExam];
   const examMockCatalog = MOCKUP_TEST_CATALOG[selectedExam] || [];
 
+  const fullMockCount = examMockCatalog.filter(c => c.type === 'full').length;
+  const sectionalMockCount = examMockCatalog.filter(c => c.type !== 'full').length;
+
+  const displayedMockCatalog = examMockCatalog.filter(card => {
+    if (catalogTab === 'full') {
+      return card.type === 'full';
+    }
+    if (catalogTab === 'sectional') {
+      if (card.type === 'full') return false;
+      if (sectionalSkillFilter === 'all') return true;
+      return card.type === sectionalSkillFilter;
+    }
+    return true;
+  });
+
   // Launch Candidate Check-in Modal
   const handleOpenCheckIn = (mockCard: MockupTestCard) => {
     sounds.playClick();
@@ -209,6 +228,10 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
       if (target.id === 'toeic-mock-sprint') {
         filteredQuestions = filteredQuestions.slice(0, 10);
       }
+    } else if (target.id.endsWith('-2')) {
+      const listening = basePractice.questions.filter(q => q.section === 'Listening').reverse();
+      const reading = basePractice.questions.filter(q => q.section === 'Reading').reverse();
+      filteredQuestions = [...listening, ...reading];
     }
 
     const practiceToRun: ExamPractice = {
@@ -1339,6 +1362,30 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
             </div>
           </div>
 
+          {/* Official Exam Format Breakdown (Reference Syllabus) */}
+          <div className="pt-4 border-t border-slate-100 mb-6">
+            <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-slate-400 mb-2.5">
+              <span>Struktur Format Ujian</span>
+              <span>4 Komponen Resmi</span>
+            </div>
+            <div className="space-y-2">
+              {examInfo.sections.map((sec, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    {sec.name === 'Listening' ? <Headphones className="w-3.5 h-3.5 text-indigo-600 flex-shrink-0" /> :
+                     sec.name === 'Reading' ? <BookOpen className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" /> :
+                     sec.name === 'Writing' ? <PenTool className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" /> :
+                     <Mic className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />}
+                    <span className="font-bold text-slate-800">{sec.name}</span>
+                  </div>
+                  <span className="text-[11px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200/80">
+                    {sec.duration} • {sec.questionsCount}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Primary Action Button */}
           <button
             onClick={() => {
@@ -1348,87 +1395,231 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
             className="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-glow-brand transition-all flex items-center justify-center gap-2 active:scale-98"
           >
             <Play className="w-4 h-4 fill-white" />
-            <span>Mulai Full Mockup Test (22 Soal • 25 Menit)</span>
+            <span>Mulai Full Mockup Test 1 (22 Soal • 25 Menit)</span>
           </button>
         </div>
 
         {/* Right: DAFTAR MOCKUP TEST RESMI YANG SIAP DIKERJAKAN */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-1">
             <div>
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">
-                Pusat Mockup Test Resmi {selectedExam}
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                Pusat Ujian & Latihan Mockup {selectedExam}
               </h3>
-              <p className="text-xs text-slate-400">Pilih simulasi lengkap atau fokus per seksi untuk memulai ujian</p>
+              <p className="text-xs text-slate-500">
+                Pilih antara simulasi ujian penuh (full test) atau latihan fokus per seksi
+              </p>
             </div>
-            <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
+            <span className="text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200 shadow-soft-sm">
               {examMockCatalog.length} Paket Ujian
             </span>
           </div>
 
-          {/* Interactive Mock Test Cards */}
-          {examMockCatalog.map((mockCard) => (
-            <div
-              key={mockCard.id}
-              className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-soft-sm hover:border-brand-400 hover:shadow-soft transition-all group"
+          {/* DUAL MODE SELECTOR: UJIAN PENUH LENGKAP VS LATIHAN PER SEKSI */}
+          <div className="p-1.5 rounded-2xl bg-slate-100 border border-slate-200/90 grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setCatalogTab('full');
+              }}
+              className={`py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all ${
+                catalogTab === 'full'
+                  ? 'bg-white text-brand-700 shadow-soft-sm border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
-              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${
-                    mockCard.type === 'full'
-                      ? 'bg-brand-100 text-brand-800 border border-brand-200'
-                      : mockCard.type === 'listening'
-                      ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
-                      : mockCard.type === 'reading'
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                      : mockCard.type === 'writing'
-                      ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                      : 'bg-rose-100 text-rose-800 border border-rose-200'
-                  }`}>
-                    {mockCard.badge}
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">
-                    {mockCard.difficulty}
-                  </span>
-                </div>
+              <Award className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+              <span>🏆 Ujian Penuh ({fullMockCount})</span>
+            </button>
 
-                <span className="text-xs font-extrabold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full">
-                  {mockCard.durationMinutes} Mins • {mockCard.questionCountLabel}
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setCatalogTab('sectional');
+              }}
+              className={`py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all ${
+                catalogTab === 'sectional'
+                  ? 'bg-white text-brand-700 shadow-soft-sm border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
+              <span>🎯 Latihan Per Seksi ({sectionalMockCount})</span>
+            </button>
+
+            <button
+              onClick={() => {
+                sounds.playClick();
+                setCatalogTab('all');
+              }}
+              className={`py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all ${
+                catalogTab === 'all'
+                  ? 'bg-white text-brand-700 shadow-soft-sm border border-slate-200'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>Semua Paket ({examMockCatalog.length})</span>
+            </button>
+          </div>
+
+          {/* Explanatory Banner based on Selected Tab */}
+          {catalogTab === 'full' && (
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-200 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+                <Award className="w-4 h-4" />
+              </div>
+              <div className="text-xs">
+                <span className="font-extrabold text-amber-950 block">
+                  Simulasi Lengkap Resmi (Full CBT Mock Test)
+                </span>
+                <span className="text-amber-800 leading-relaxed block mt-0.5">
+                  Menggabungkan seluruh komponen ujian (Listening + Reading) secara terpadu dengan durasi 25 menit, 22 soal autentik, Question Navigator 1–22, timer ketat, serta lembar sertifikat nilai resmi TRF (Test Report Form).
                 </span>
               </div>
+            </div>
+          )}
 
-              <h4 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-brand-600 transition-colors">
-                {mockCard.title}
-              </h4>
-              <p className="text-xs font-bold text-slate-500 mt-0.5 mb-2">
-                {mockCard.subtitle}
-              </p>
-              <p className="text-xs text-slate-500 leading-relaxed mb-4">
-                {mockCard.description}
-              </p>
-
-              <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-slate-100">
-                <div className="flex flex-wrap gap-1.5">
-                  {mockCard.skills.map((skill, sIdx) => (
-                    <span
-                      key={sIdx}
-                      className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600"
-                    >
-                      ✓ {skill}
-                    </span>
-                  ))}
+          {catalogTab === 'sectional' && (
+            <div className="space-y-3">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 via-indigo-500/5 to-transparent border border-blue-200 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+                  <Layers className="w-4 h-4" />
                 </div>
+                <div className="text-xs">
+                  <span className="font-extrabold text-brand-950 block">
+                    Latihan Terfokus Per Seksi (Listening, Reading, Writing, Speaking)
+                  </span>
+                  <span className="text-brand-800 leading-relaxed block mt-0.5">
+                    Fokus latih kelemahan spesifik Anda tanpa harus menghabiskan waktu mengerjakan seluruh rangkaian ujian. Pilih filter seksi di bawah untuk mulai latihan mandiri.
+                  </span>
+                </div>
+              </div>
 
-                <button
-                  onClick={() => handleOpenCheckIn(mockCard)}
-                  className="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-all flex items-center gap-1.5 active:scale-95 ml-auto"
-                >
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  <span>Kerjakan Mock Test</span>
-                </button>
+              {/* Sub-Filter Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 pb-1">
+                {[
+                  { id: 'all', label: `Semua Seksi (${sectionalMockCount})` },
+                  { id: 'listening', label: '🎧 Listening Mockup' },
+                  { id: 'reading', label: '📖 Reading Mockup' },
+                  { id: 'writing', label: '✍️ Writing Mockup' },
+                  { id: 'speaking', label: '🎙️ Speaking Mockup' },
+                ].map((pill) => {
+                  const isPillActive = sectionalSkillFilter === pill.id;
+                  return (
+                    <button
+                      key={pill.id}
+                      onClick={() => {
+                        sounds.playClick();
+                        setSectionalSkillFilter(pill.id as any);
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        isPillActive
+                          ? 'bg-brand-600 text-white shadow-soft-sm'
+                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
+                    >
+                      {pill.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Cards List */}
+          {displayedMockCatalog.length === 0 ? (
+            <div className="p-8 rounded-3xl bg-white border border-slate-200 text-center text-slate-400">
+              <p className="text-sm font-semibold">Tidak ada paket ujian pada filter ini.</p>
+              <button
+                onClick={() => setSectionalSkillFilter('all')}
+                className="mt-2 text-xs font-bold text-brand-600 underline"
+              >
+                Tampilkan semua seksi
+              </button>
+            </div>
+          ) : (
+            displayedMockCatalog.map((mockCard) => {
+              const isFull = mockCard.type === 'full';
+              return (
+                <div
+                  key={mockCard.id}
+                  className={`p-5 sm:p-6 rounded-3xl bg-white border transition-all group ${
+                    isFull
+                      ? 'border-amber-200/90 shadow-soft hover:border-amber-400 ring-1 ring-amber-100/50'
+                      : 'border-slate-200/90 shadow-soft-sm hover:border-brand-400 hover:shadow-soft'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+                        isFull
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                          : mockCard.type === 'listening'
+                          ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                          : mockCard.type === 'reading'
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          : mockCard.type === 'writing'
+                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                          : 'bg-rose-100 text-rose-800 border border-rose-200'
+                      }`}>
+                        {mockCard.badge}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-400">
+                        {mockCard.difficulty}
+                      </span>
+                    </div>
+
+                    <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full ${
+                      isFull
+                        ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                        : 'text-brand-600 bg-brand-50'
+                    }`}>
+                      {mockCard.durationMinutes} Mins • {mockCard.questionCountLabel}
+                    </span>
+                  </div>
+
+                  <h4 className={`text-base sm:text-lg font-black transition-colors ${
+                    isFull
+                      ? 'text-slate-900 group-hover:text-amber-600'
+                      : 'text-slate-900 group-hover:text-brand-600'
+                  }`}>
+                    {mockCard.title}
+                  </h4>
+                  <p className="text-xs font-bold text-slate-500 mt-0.5 mb-2">
+                    {mockCard.subtitle}
+                  </p>
+                  <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                    {mockCard.description}
+                  </p>
+
+                  <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-slate-100">
+                    <div className="flex flex-wrap gap-1.5">
+                      {mockCard.skills.map((skill, sIdx) => (
+                        <span
+                          key={sIdx}
+                          className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600"
+                        >
+                          ✓ {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => handleOpenCheckIn(mockCard)}
+                      className={`px-5 py-2 rounded-xl text-white font-bold text-xs shadow-soft transition-all flex items-center gap-1.5 active:scale-95 ml-auto ${
+                        isFull
+                          ? 'bg-amber-600 hover:bg-amber-700 shadow-glow-amber'
+                          : 'bg-brand-600 hover:bg-brand-700'
+                      }`}
+                    >
+                      <Play className="w-3.5 h-3.5 fill-white" />
+                      <span>{isFull ? 'Mulai Ujian Penuh' : 'Mulai Latihan Seksi'}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
