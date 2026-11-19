@@ -1197,3 +1197,417 @@ export const SAMPLE_EXAM_PRACTICES: Record<ExamType, ExamPractice> = {
     ]
   }
 };
+
+export interface MockupTestCard {
+  id: string;
+  exam: ExamType;
+  type: 'full' | 'listening' | 'reading' | 'writing' | 'speaking';
+  title: string;
+  subtitle: string;
+  durationMinutes: number;
+  questionCountLabel: string;
+  badge: string;
+  difficulty: 'Official Standard' | 'Advanced Band 8+' | 'Corporate Benchmark';
+  description: string;
+  skills: string[];
+}
+
+export const MOCKUP_TEST_CATALOG: Record<ExamType, MockupTestCard[]> = {
+  IELTS: [
+    {
+      id: 'ielts-mock-full',
+      exam: 'IELTS',
+      type: 'full',
+      title: 'IELTS on Computer: Full Academic Simulation',
+      subtitle: 'Listening Parts 1-4 & Reading Passages 1-3 Terstandarisasi',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full CBT Simulation',
+      difficulty: 'Official Standard',
+      description: 'Simulasi lengkap ujian resmi IELTS on Computer mencakup 10 soal audio penutur asli dan 12 soal pemahaman bacaan akademik mendalam.',
+      skills: ['Parts 1-4 Listening', 'Academic Passages 1-3', 'True/False/Not Given', 'Heading Matching']
+    },
+    {
+      id: 'ielts-mock-listening',
+      exam: 'IELTS',
+      type: 'listening',
+      title: 'IELTS Listening Section Mockup Test',
+      subtitle: 'Social Booking, Facility Tour, Research Debate, Marine Biology',
+      durationMinutes: 12,
+      questionCountLabel: '10 Soal Audio',
+      badge: 'Audio Lab CBT',
+      difficulty: 'Official Standard',
+      description: 'Latihan mandiri seksi Listening dengan 4 rekaman audio penutur asli: panggilan telepon, tur fasilitas, tutorial riset, dan kuliah biologi kelautan.',
+      skills: ['Form Completion', 'Specific Figures', 'Speaker Stance', 'Lecture Synthesis']
+    },
+    {
+      id: 'ielts-mock-reading',
+      exam: 'IELTS',
+      type: 'reading',
+      title: 'IELTS Academic Reading Section Mockup',
+      subtitle: 'Urban Microclimates, Bilingual Brain, Bronze Age Metallurgy',
+      durationMinutes: 15,
+      questionCountLabel: '12 Soal Teks',
+      badge: 'Reading Lab CBT',
+      difficulty: 'Advanced Band 8+',
+      description: '3 artikel jurnal ilmiah berstandar Cambridge IELTS: fenomena Urban Heat Island, neurobiologi bilingualisme, dan bukti arkeologi perunggu.',
+      skills: ['Skimming & Scanning', 'True/False/Not Given', 'Lexical Context', 'Main Idea Matching']
+    },
+    {
+      id: 'ielts-mock-writing',
+      exam: 'IELTS',
+      type: 'writing',
+      title: 'IELTS Writing Task 2 Essay Simulator',
+      subtitle: 'Discursive Essay with Live Word Counter & Band 9.0 Benchmark',
+      durationMinutes: 40,
+      questionCountLabel: '1 Academic Essay (250+ Kata)',
+      badge: 'Interactive Writing',
+      difficulty: 'Official Standard',
+      description: 'Simulator menulis esai akademik resmi dengan editor teks, penghitung kata otomatis, kriteria penilaian resmi (TR, CC, LR, GRA), dan kunci jawaban model Band 9.0.',
+      skills: ['Task Achievement', 'Coherence & Cohesion', 'Lexical Resource', 'Grammatical Accuracy']
+    },
+    {
+      id: 'ielts-mock-speaking',
+      exam: 'IELTS',
+      type: 'speaking',
+      title: 'IELTS Speaking Interview Simulator',
+      subtitle: '3-Part Interview with AI Examiner Voice & Speech Evaluation',
+      durationMinutes: 12,
+      questionCountLabel: '3 Bagian Wawancara',
+      badge: 'Oral Interview',
+      difficulty: 'Official Standard',
+      description: 'Wawancara tatap muka interaktif dengan suara penguji asli: pengenalan diri, kartu petunjuk (cue card) 2 menit, dan diskusi konseptual dua arah.',
+      skills: ['Fluency & Coherence', 'Pronunciation', 'Lexical Variety', 'Elaborated Responses']
+    }
+  ],
+  TOEFL: [
+    {
+      id: 'toefl-mock-full',
+      exam: 'TOEFL',
+      type: 'full',
+      title: 'TOEFL iBT: Full Length University Mock Test',
+      subtitle: 'Academic Reading & Campus Listening Terstandarisasi',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full iBT Standard',
+      difficulty: 'Official Standard',
+      description: 'Simulasi lengkap ujian resmi ETS TOEFL iBT: bacaan evolusi biologi, peradaban hidrolik kuno, konsultasi penasihat akademik, dan kuliah astrofisika.',
+      skills: ['Factual Information', 'Negative Factual (EXCEPT)', 'Lecture Comprehension', 'Inference & Purpose']
+    },
+    {
+      id: 'toefl-mock-reading',
+      exam: 'TOEFL',
+      type: 'reading',
+      title: 'TOEFL iBT Reading Section Mockup Test',
+      subtitle: 'Hawaiian Honeycreepers & Mesopotamian Hydraulic Civilization',
+      durationMinutes: 15,
+      questionCountLabel: '11 Soal Teks',
+      badge: 'Reading Lab iBT',
+      difficulty: 'Advanced Band 8+',
+      description: '2 bacaan universitas resmi: spesiasi radiasi adaptif burung finch Hawaii dan peran saluran irigasi dalam pembentukan hierarki birokrasi Mesopotamia.',
+      skills: ['Vocabulary in Context', 'Negative Factual', 'Sentence Simplification', 'Rhetorical Purpose']
+    },
+    {
+      id: 'toefl-mock-listening',
+      exam: 'TOEFL',
+      type: 'listening',
+      title: 'TOEFL iBT Listening Section Mockup Test',
+      subtitle: 'Academic Advising, Astrophysics, Library Microfilm, Bauhaus',
+      durationMinutes: 14,
+      questionCountLabel: '11 Soal Audio',
+      badge: 'Audio Lab iBT',
+      difficulty: 'Official Standard',
+      description: 'Dialog kampus dan kuliah dosen: beban 19 SKS ekonometrika, resonansi Sabuk Kuiper Neptunus-Pluto, preservasi mikrofilm, dan arsitektur Bauhaus.',
+      skills: ['Main Idea & Purpose', 'Connecting Information', 'Speaker Attitude', 'Scientific Implication']
+    },
+    {
+      id: 'toefl-mock-writing',
+      exam: 'TOEFL',
+      type: 'writing',
+      title: 'TOEFL iBT Writing for Academic Discussion',
+      subtitle: 'Interactive Forum Post with Peer Synthesis (100+ Words)',
+      durationMinutes: 10,
+      questionCountLabel: '1 Academic Post (100+ Kata)',
+      badge: 'Interactive Writing',
+      difficulty: 'Official Standard',
+      description: 'Tugas menulis resmi format baru TOEFL iBT: menanggapi pertanyaan dosen Dr. Diaz mengenai kuliah daring vs tatap muka dan mensintesis argumen mahasiswa.',
+      skills: ['Academic Register', 'Synthesizing Views', 'Concise Development', 'Syntactic Precision']
+    },
+    {
+      id: 'toefl-mock-speaking',
+      exam: 'TOEFL',
+      type: 'speaking',
+      title: 'TOEFL iBT Integrated Speaking Simulator',
+      subtitle: 'Campus Announcement & Student Opinion (30s Prep, 60s Speak)',
+      durationMinutes: 10,
+      questionCountLabel: '1 Integrated Task',
+      badge: 'Audio & Speech',
+      difficulty: 'Official Standard',
+      description: 'Tugas berbicara terpadu format ETS: membaca pengumuman renovasi gedung kampus, mendengarkan percakapan keberatan mahasiswa, dan memaparkan argumen.',
+      skills: ['Delivery & Pronunciation', 'Topic Synthesis', 'Time Pacing', 'Spoken Coherence']
+    }
+  ],
+  TOEIC: [
+    {
+      id: 'toeic-mock-full',
+      exam: 'TOEIC',
+      type: 'full',
+      title: 'TOEIC Official Workplace Mock Test (Parts 1-7)',
+      subtitle: 'Photographs, Q&A, Office Conversations, Grammar, Memos, Invoices',
+      durationMinutes: 25,
+      questionCountLabel: '22 Soal Lengkap',
+      badge: 'Full TOEIC CBT',
+      difficulty: 'Corporate Benchmark',
+      description: 'Simulasi lengkap ujian kompetensi bahasa Inggris dunia kerja ETS TOEIC Listening & Reading berstandar eksekutif perusahaan multinasional.',
+      skills: ['Workplace Photos', 'Question-Response', 'Commercial Grammar', 'Double Passages']
+    },
+    {
+      id: 'toeic-mock-listening',
+      exam: 'TOEIC',
+      type: 'listening',
+      title: 'TOEIC Listening Section Mockup Test (Parts 1-4)',
+      subtitle: 'Photos, Q&A, Tokyo Expo Dialogue, Airport Gate Announcement',
+      durationMinutes: 12,
+      questionCountLabel: '10 Soal Audio',
+      badge: 'Audio Lab CBT',
+      difficulty: 'Corporate Benchmark',
+      description: 'Seksi mendengarkan bisnis Parts 1-4: deskripsi visual foto rapat, respon logistik, panggilan telepon pengiriman kilat, dan pengumuman gerbang bandara.',
+      skills: ['Part 1 Photos', 'Part 2 Q&A', 'Part 3 Conversations', 'Part 4 Short Talks']
+    },
+    {
+      id: 'toeic-mock-reading',
+      exam: 'TOEIC',
+      type: 'reading',
+      title: 'TOEIC Reading Section Mockup Test (Parts 5-7)',
+      subtitle: 'Incomplete Sentences, Corporate Travel Policy, Purchase Order',
+      durationMinutes: 15,
+      questionCountLabel: '12 Soal Teks',
+      badge: 'Reading Lab CBT',
+      difficulty: 'Corporate Benchmark',
+      description: 'Materi bacaan korporat Parts 5-7: tata bahasa komersial, memo kebijakan perjalanan dinas, dan korespondensi keluhan pesanan barang PO #4489.',
+      skills: ['Part 5 Incomplete Sentences', 'Part 6 Text Completion', 'Part 7 Double Passages', 'Contract Details']
+    },
+    {
+      id: 'toeic-mock-sprint',
+      exam: 'TOEIC',
+      type: 'reading',
+      title: 'TOEIC Part 5 Grammar & Collocations Sprint',
+      subtitle: 'Speed Grammar Drill: Adverbs, Prepositions, Voice, Conditionals',
+      durationMinutes: 8,
+      questionCountLabel: '10 Soal Kilat',
+      badge: 'Speed Drill',
+      difficulty: 'Corporate Benchmark',
+      description: 'Latihan kecepatan tinggi tata bahasa bisnis: kata keterangan, contingency plan, konjungsi kondisional, dan kata depan korporat.',
+      skills: ['Speed Decision Making', 'Business Collocations', 'Grammar Accuracy', 'Time Pacing']
+    }
+  ]
+};
+
+export interface WritingMockData {
+  id: string;
+  exam: ExamType;
+  title: string;
+  taskType: string;
+  promptText: string;
+  scenarioBackground?: string;
+  peerDiscussions?: Array<{ name: string; avatar: string; response: string }>;
+  minWords: number;
+  timeLimitMinutes: number;
+  keyAssessmentCriteria: string[];
+  recommendedTransitions: string[];
+  modelAnswer: string;
+  examinerNotes: string;
+}
+
+export const WRITING_MOCKS: Record<string, WritingMockData> = {
+  'ielts-mock-writing': {
+    id: 'ielts-mock-writing',
+    exam: 'IELTS',
+    title: 'IELTS Academic Writing Task 2: AI & Future Employment',
+    taskType: 'IELTS Task 2 Discursive Essay',
+    promptText: 'Some people believe that technological developments and artificial intelligence will lead to widespread unemployment, while others argue that technology creates more skilled opportunities than it eliminates. Discuss both views and give your own opinion.',
+    scenarioBackground: 'Write a formal academic essay of at least 250 words defending a balanced thesis statement. Present relevant arguments, historical precedents, and a decisive personal conclusion.',
+    minWords: 250,
+    timeLimitMinutes: 40,
+    keyAssessmentCriteria: [
+      'Task Achievement: Fully address both perspectives and state a clear personal stance',
+      'Coherence & Cohesion: Organize ideas into 4 well-structured paragraphs with academic discourse markers',
+      'Lexical Resource: Employ high-register economic vocabulary (e.g. automation, proliferation, reskilling)',
+      'Grammatical Accuracy: Use a wide range of complex sentences and passive constructions'
+    ],
+    recommendedTransitions: [
+      'On the one hand...',
+      'Conversely...',
+      'Furthermore...',
+      'It is widely acknowledged that...',
+      'In conclusion...'
+    ],
+    modelAnswer: `In contemporary economic discourse, the rapid proliferation of artificial intelligence has sparked contentious debate regarding its long-term impact on global employment. While a considerable segment of observers fears catastrophic displacement of traditional labor, I firmly contend that technological advancements fundamentally transform the workforce rather than permanently eliminate human occupation.
+
+On the one hand, proponents of the displacement perspective argue that automated algorithms and robotics surpass human efficiency in repetitive tasks. For instance, algorithmic data processing has curtailed administrative clerical roles, while automated assembly systems have reduced factory workforce demands. Consequently, without rapid retraining, vulnerable segments of the workforce risk prolonged economic marginalization.
+
+Conversely, historical evidence indicates that technological revolutions ultimately generate unprecedented vocational categories. The advent of personal computing rendered traditional typists obsolete, yet simultaneously fostered software development, digital marketing, and cybersecurity industries. Similarly, modern artificial intelligence requires specialized prompt architects, ethics compliance officers, and system curators. Furthermore, artificial intelligence elevates human workers from rote tasks, allowing greater focus on creativity, diplomacy, and interpersonal communication—capacities that algorithms cannot replicate.
+
+In conclusion, although the transition phase inevitably presents disruption for individuals performing routine tasks, technological evolution historically expands economic productivity and creates novel employment domains. Provided that governments and universities invest decisively in proactive lifelong reskilling initiatives, artificial intelligence will serve as a catalyst for professional empowerment rather than human obsolescence.`,
+    examinerNotes: 'Band 9.0 Benchmark: Demonstrates seamless coherence, sophisticated lexical choices (curtailed, vocational, obsolescence), and an authoritative balanced argument.'
+  },
+  'toefl-mock-writing': {
+    id: 'toefl-mock-writing',
+    exam: 'TOEFL',
+    title: 'TOEFL iBT Writing for Academic Discussion: Online Education',
+    taskType: 'TOEFL Academic Discussion Task',
+    promptText: 'Your professor is teaching a class on educational policy. Write a post in response to the professor’s question: "Do you believe fully online degree programs offer the same educational value as traditional in-person university experiences? Explain your stance with specific rationale."',
+    scenarioBackground: 'Dr. Diaz: "Today we are evaluating the expansion of tertiary distance learning. While enrollment in digital degrees has surged, educators debate whether the virtual medium matches the holistic developmental value of traditional campus life. What is your perspective?"',
+    peerDiscussions: [
+      {
+        name: 'Claire',
+        avatar: '👩‍🎓',
+        response: 'In my view, in-person university education remains superior because spontaneous classroom debates, peer socialization, and hands-on laboratory experiments foster deeper interpersonal skills that digital screens cannot simulate.'
+      },
+      {
+        name: 'Marco',
+        avatar: '👨‍💻',
+        response: 'I disagree with Claire. Online programs democratize higher education by enabling non-traditional working professionals and parents to access world-class curricula without relocating or sacrificing employment.'
+      }
+    ],
+    minWords: 100,
+    timeLimitMinutes: 10,
+    keyAssessmentCriteria: [
+      'Direct contribution to the academic discussion with personal reasoning',
+      'Effective synthesis or expansion on peer points (Claire or Marco)',
+      'Academic tone, grammatical variety, and concise elaboration (100-150 words)'
+    ],
+    recommendedTransitions: [
+      'While I acknowledge Claire\'s valid point regarding...',
+      'I align more closely with Marco\'s perspective that...',
+      'In addition to greater flexibility...',
+      'Ultimately, the pedagogical value depends on...'
+    ],
+    modelAnswer: `While I acknowledge Claire’s valid concern regarding the importance of spontaneous peer interactions, I align more closely with Marco’s perspective that online degrees provide equivalent educational value when properly structured. 
+
+Modern virtual learning environments have evolved far beyond passive video lectures; they incorporate collaborative asynchronous forums, virtual laboratories, and interactive video seminars that encourage disciplined self-regulation. Furthermore, online platforms democratize tertiary education by accommodating geographically remote students and mid-career professionals who cannot afford the prohibitive living costs of traditional residential campuses. 
+
+Ultimately, educational quality is dictated by rigorous curriculum design and intellectual commitment rather than physical co-presence in a lecture hall.`,
+    examinerNotes: 'Top Score (5.0/5.0): Directly references peer viewpoints, demonstrates mature academic vocabulary (prohibitive, self-regulation), and delivers a focused argument within 125 words.'
+  }
+};
+
+export interface SpeakingMockData {
+  id: string;
+  exam: ExamType;
+  title: string;
+  examinerName: string;
+  examinerRole: string;
+  parts: Array<{
+    partNumber: number;
+    partTitle: string;
+    description: string;
+    prepTimeSeconds?: number;
+    speakTimeSeconds: number;
+    examinerAudioPrompt: string;
+    questionText: string;
+    cueCardPoints?: string[];
+    suggestedStructure: string[];
+    modelNativeResponse: string;
+  }>;
+}
+
+export const SPEAKING_MOCKS: Record<string, SpeakingMockData> = {
+  'ielts-mock-speaking': {
+    id: 'ielts-mock-speaking',
+    exam: 'IELTS',
+    title: 'IELTS Speaking Full Interview Simulation',
+    examinerName: 'Dr. Emily Richardson',
+    examinerRole: 'Senior IELTS British Council Examiner',
+    parts: [
+      {
+        partNumber: 1,
+        partTitle: 'Part 1: Introduction & Everyday Topic',
+        description: 'General questions about yourself, your background, studies, and local environment (4-5 minutes).',
+        speakTimeSeconds: 60,
+        examinerAudioPrompt: 'Good afternoon. My name is Dr. Emily Richardson. In this first part of the speaking test, I would like to ask you some questions about your hometown. Where is your hometown located, and what do you like most about living there?',
+        questionText: 'Where is your hometown located, and what do you like most about living there?',
+        suggestedStructure: [
+          'State geographic location clearly',
+          'Mention 2 positive features (community atmosphere, green parks, or vibrant culture)',
+          'Provide a concrete example from daily life'
+        ],
+        modelNativeResponse: 'I currently live in Jakarta, the bustling capital city of Indonesia. What I appreciate most about my neighborhood is its vibrant culinary diversity and strong sense of community warmth. Even though it is a rapid metropolis, early in the morning you can always find neighborhood residents socializing at local coffee stalls and bustling traditional markets.'
+      },
+      {
+        partNumber: 2,
+        partTitle: 'Part 2: Individual Long Turn (Cue Card)',
+        description: 'You will have 1 minute to take notes, and 2 minutes to speak uninterrupted on the topic card.',
+        prepTimeSeconds: 60,
+        speakTimeSeconds: 120,
+        examinerAudioPrompt: 'Now, I am going to give you a topic card. You have one minute to prepare what you are going to say, and you can take notes. Then, you will speak for two minutes. Here is your topic: Describe an environmental project or initiative in your community that you found inspiring.',
+        questionText: 'Describe an environmental project or initiative in your community that you found inspiring.',
+        cueCardPoints: [
+          'What the project was and where it took place',
+          'Who organized it and how you learned about it',
+          'What specific actions were taken by participants',
+          'And explain why you found this initiative inspiring.'
+        ],
+        suggestedStructure: [
+          'Introduction: Name the project and the neighborhood context',
+          'Body Paragraph 1: How it started and the volunteers involved',
+          'Body Paragraph 2: Tangible environmental actions (urban composting, tree planting, river cleanup)',
+          'Conclusion: Why it created a lasting mindset shift among local youth'
+        ],
+        modelNativeResponse: `I would like to talk about a grassroots urban greening and river cleanup initiative called "Clean River Ciliwung" that took place in my local district last year. I first learned about it through a community social media campaign organized by university environmental science students. 
+
+The primary goal of the initiative was to restore heavily silted drainage channels and replace plastic debris with bio-swales and indigenous bamboo groves. Over the course of three weekends, more than two hundred local residents—ranging from school children to elderly retirees—worked collaboratively to extract discarded single-use plastics and establish communal composting bins.
+
+What made this project extraordinarily inspiring was not merely the physical removal of five tons of waste, but the profound psychological shift it fostered within our community. It transformed a neglected polluted canal into a lively public walking promenade, proving that collective grassroots action can achieve tangible ecological restoration without waiting for central bureaucratic intervention.`
+      },
+      {
+        partNumber: 3,
+        partTitle: 'Part 3: Two-Way Academic Discussion',
+        description: 'In-depth conceptual discussion on global environmental responsibility and civic participation.',
+        speakTimeSeconds: 90,
+        examinerAudioPrompt: 'We have been speaking about environmental projects. Now, I would like to discuss some broader environmental issues. In your view, do you believe international environmental agreements are more effective than local grassroots movements at combating climate change?',
+        questionText: 'Do you believe international treaties are more effective than local grassroots movements at combating climate change?',
+        suggestedStructure: [
+          'Acknowledge both levels of action (macro vs micro)',
+          'Explain why international treaties establish critical legal frameworks and emissions caps',
+          'Argue why grassroots movements are indispensable for local enforcement and behavioral change',
+          'Synthesize into a complementary relationship'
+        ],
+        modelNativeResponse: `I believe that international treaties and grassroots movements are mutually indispensable rather than mutually exclusive. On the macro level, international accords like the Paris Agreement establish legally binding carbon emissions quotas, incentivize renewable energy subsidies, and mobilize global green climate funds. 
+
+However, high-level treaties remain toothless without localized grassroots enforcement. It is community organizations and informed citizens who actually separate waste, embrace public transit, and hold municipal corporations accountable. Therefore, while global treaties provide the architectural blueprint, local grassroots initiatives supply the vital civic engine that drives genuine ecological sustainability.`
+      }
+    ]
+  },
+  'toefl-mock-speaking': {
+    id: 'toefl-mock-speaking',
+    exam: 'TOEFL',
+    title: 'TOEFL iBT Integrated Speaking Simulator',
+    examinerName: 'ETS University Proctor',
+    examinerRole: 'Official TOEFL iBT Speaking Evaluator',
+    parts: [
+      {
+        partNumber: 1,
+        partTitle: 'Campus Announcement & Discussion',
+        description: 'Read a campus notice, listen to two students debating the policy, then explain the speaker\'s stance.',
+        prepTimeSeconds: 30,
+        speakTimeSeconds: 60,
+        examinerAudioPrompt: 'The university is planning to renovate the student union building and increase quarterly meal plan fees. Read the campus notice for 45 seconds, then listen to two students discuss the plan. Finally, explain the man\'s opinion and the reasons he gives.',
+        questionText: 'State the student’s opinion about the university’s plan and explain the reasons he gives for holding that opinion.',
+        cueCardPoints: [
+          'Reading: 15% meal plan fee hike to fund a new rooftop lounge',
+          'Listening: The male student vehemently opposes the fee hike',
+          'Reason 1: Most students live off-campus and won\'t use the rooftop',
+          'Reason 2: Financial strain on students already struggling with tuition'
+        ],
+        suggestedStructure: [
+          'State the student\'s opinion clearly in the opening sentence',
+          'Explain the first rationale (off-campus commuter demographics)',
+          'Explain the second rationale (economic burden and fee proportionality)'
+        ],
+        modelNativeResponse: 'The male student strongly opposes the university’s proposal to raise meal plan fees for the student union renovation. First, he points out that over sixty percent of the student body commutes from off-campus apartments and rarely uses the campus dining halls, meaning they would be forced to subsidize a luxury rooftop lounge they will never visit. Second, he argues that tuition costs have already increased substantially this academic year, so imposing an extra three hundred dollar quarterly fee places an unreasonable financial burden on undergraduates who are already working part-time jobs just to afford textbooks.'
+      }
+    ]
+  }
+};
+

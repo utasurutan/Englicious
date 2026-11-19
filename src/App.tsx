@@ -391,6 +391,7 @@ export const App: React.FC = () => {
             {practiceTab === 'srs' && <VocabSRSDeck />}
             {practiceTab === 'exam-prep' && (
               <ExamPrep
+                user={user}
                 onBackToDashboard={() => setCurrentView('dashboard')}
                 onSelectRecommendedLesson={handleSelectRecommendedLesson}
               />
@@ -400,6 +401,7 @@ export const App: React.FC = () => {
 
         {currentView === 'exam-prep' && (
           <ExamPrep
+            user={user}
             onBackToDashboard={() => setCurrentView('dashboard')}
             onSelectRecommendedLesson={handleSelectRecommendedLesson}
           />

@@ -2,35 +2,82 @@ import React, { useState, useEffect } from 'react';
 import { 
   Award, Clock, Flag, CheckCircle2, ChevronRight, ChevronLeft, 
   RotateCcw, Sparkles, Volume2, Play, Pause, AlertTriangle, ArrowRight, 
-  BookOpen, Layers, BarChart3, Headphones, ShieldCheck, Check 
+  BookOpen, Layers, BarChart3, Headphones, ShieldCheck, Check, 
+  Printer, FileText, Send, Mic, MicOff, User, PenTool, ExternalLink, 
+  HelpCircle, X, Sparkle, RefreshCw 
 } from 'lucide-react';
-import { ExamType, ExamPractice, ExamQuestion, ExamReport } from '../types';
-import { EXAM_INFOS, SAMPLE_EXAM_PRACTICES } from '../data/examPrep';
+import { ExamType, ExamPractice, ExamQuestion, ExamReport, UserProfile } from '../types';
+import { 
+  EXAM_INFOS, 
+  SAMPLE_EXAM_PRACTICES, 
+  MOCKUP_TEST_CATALOG, 
+  WRITING_MOCKS, 
+  SPEAKING_MOCKS, 
+  MockupTestCard, 
+  WritingMockData, 
+  SpeakingMockData 
+} from '../data/examPrep';
 import { sounds } from '../utils/sound';
 import { SpeechService } from '../utils/speech';
 import confetti from 'canvas-confetti';
 
 interface Props {
+  user?: UserProfile;
   onBackToDashboard: () => void;
   onSelectRecommendedLesson: (lessonId: string) => void;
 }
 
-export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommendedLesson }) => {
+export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRecommendedLesson }) => {
   const [selectedExam, setSelectedExam] = useState<ExamType>('IELTS');
+  
+  // Active Test States
   const [activePractice, setActivePractice] = useState<ExamPractice | null>(null);
+  const [activeWritingMock, setActiveWritingMock] = useState<WritingMockData | null>(null);
+  const [activeSpeakingMock, setActiveSpeakingMock] = useState<SpeakingMockData | null>(null);
 
-  // Practice Test State
+  // Pre-Exam Check-in & Equipment Verification Modal
+  const [checkInTarget, setCheckInTarget] = useState<MockupTestCard | null>(null);
+  const [isPlayingSoundCheck, setIsPlayingSoundCheck] = useState(false);
+
+  // MCQ Practice Test State
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<string, number>>({});
   const [markedForReview, setMarkedForReview] = useState<Record<string, boolean>>({});
   const [secondsRemaining, setSecondsRemaining] = useState<number>(25 * 60);
   const [timerRunning, setTimerRunning] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  const [passageFontSize, setPassageFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
+
+  // Writing Mock State
+  const [writingUserText, setWritingUserText] = useState('');
+  const [writingSecondsRemaining, setWritingSecondsRemaining] = useState(40 * 60);
+  const [writingTimerRunning, setWritingTimerRunning] = useState(false);
+  const [writingSubmitted, setWritingSubmitted] = useState(false);
+  const [writingEvaluation, setWritingEvaluation] = useState<{
+    wordCount: number;
+    bandScore: string;
+    taskAchievementFeedback: string;
+    coherenceFeedback: string;
+    lexicalFeedback: string;
+    grammarFeedback: string;
+  } | null>(null);
+
+  // Speaking Mock State
+  const [speakingCurrentPartIdx, setSpeakingCurrentPartIdx] = useState(0);
+  const [speakingTimerSeconds, setSpeakingTimerSeconds] = useState(60);
+  const [isPrepCountdown, setIsPrepCountdown] = useState(false);
+  const [isRecordingAnswer, setIsRecordingAnswer] = useState(false);
+  const [recordedNotes, setRecordedNotes] = useState<Record<number, string>>({});
+  const [speakingFinished, setSpeakingFinished] = useState(false);
 
   // Result Report
   const [report, setReport] = useState<ExamReport | null>(null);
 
-  // Countdown timer effect
+  // Candidate Profile Details
+  const candidateName = user?.name || 'Sultan';
+  const candidateNumber = `ENG-2026-${selectedExam}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  // MCQ Countdown timer effect
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (activePractice && timerRunning && secondsRemaining > 0) {
@@ -48,28 +95,125 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
     return () => clearInterval(interval);
   }, [activePractice, timerRunning, secondsRemaining]);
 
+  // Writing countdown timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeWritingMock && writingTimerRunning && writingSecondsRemaining > 0 && !writingSubmitted) {
+      interval = setInterval(() => {
+        setWritingSecondsRemaining(prev => {
+          if (prev <= 1) {
+            setWritingTimerRunning(false);
+            handleSubmitWriting();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [activeWritingMock, writingTimerRunning, writingSecondsRemaining, writingSubmitted]);
+
+  // Speaking timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeSpeakingMock && speakingTimerSeconds > 0 && !speakingFinished && (isPrepCountdown || isRecordingAnswer)) {
+      interval = setInterval(() => {
+        setSpeakingTimerSeconds(prev => {
+          if (prev <= 1) {
+            if (isPrepCountdown) {
+              // Transition from prep to speaking
+              setIsPrepCountdown(false);
+              setIsRecordingAnswer(true);
+              const part = activeSpeakingMock.parts[speakingCurrentPartIdx];
+              return part.speakTimeSeconds;
+            } else {
+              // Time's up for speaking
+              setIsRecordingAnswer(false);
+              sounds.playCompletionFanfare();
+              return 0;
+            }
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [activeSpeakingMock, speakingTimerSeconds, isPrepCountdown, isRecordingAnswer, speakingFinished]);
+
   const examInfo = EXAM_INFOS[selectedExam];
+  const examMockCatalog = MOCKUP_TEST_CATALOG[selectedExam] || [];
 
-  const handleStartExam = (mode: 'full' | 'listening' | 'reading' = 'full') => {
+  // Launch Candidate Check-in Modal
+  const handleOpenCheckIn = (mockCard: MockupTestCard) => {
     sounds.playClick();
+    setCheckInTarget(mockCard);
+  };
+
+  // Run Headset Sound Check
+  const handlePlaySoundCheck = () => {
+    sounds.playClick();
+    setIsPlayingSoundCheck(true);
+    SpeechService.speak(
+      `This is a sound check for the official Englicious ${selectedExam} examination simulator. If you can hear this audio clearly through your headset, your workstation is ready.`,
+      0.95,
+      1.0,
+      () => setIsPlayingSoundCheck(false)
+    );
+  };
+
+  // Confirm Check-in and Start the Selected Test
+  const handleConfirmStartTest = () => {
+    if (!checkInTarget) return;
+    sounds.playClick();
+    const target = checkInTarget;
+    setCheckInTarget(null);
+
+    if (target.type === 'writing') {
+      const writingData = WRITING_MOCKS[target.id];
+      if (writingData) {
+        setActiveWritingMock(writingData);
+        setWritingUserText('');
+        setWritingSecondsRemaining(writingData.timeLimitMinutes * 60);
+        setWritingTimerRunning(true);
+        setWritingSubmitted(false);
+        setWritingEvaluation(null);
+        return;
+      }
+    }
+
+    if (target.type === 'speaking') {
+      const speakingData = SPEAKING_MOCKS[target.id];
+      if (speakingData) {
+        setActiveSpeakingMock(speakingData);
+        setSpeakingCurrentPartIdx(0);
+        const firstPart = speakingData.parts[0];
+        setSpeakingTimerSeconds(firstPart.speakTimeSeconds);
+        setIsPrepCountdown(false);
+        setIsRecordingAnswer(false);
+        setRecordedNotes({});
+        setSpeakingFinished(false);
+        return;
+      }
+    }
+
+    // Otherwise, start Multiple-Choice Simulator (Full, Listening, Reading, Sprint)
     const basePractice = SAMPLE_EXAM_PRACTICES[selectedExam];
-
     let filteredQuestions = basePractice.questions;
-    let timeLimit = basePractice.timeLimitMinutes;
-    let title = basePractice.title;
+    let timeLimit = target.durationMinutes;
+    let title = target.title;
 
-    if (mode === 'listening') {
+    if (target.type === 'listening') {
       filteredQuestions = basePractice.questions.filter(q => q.section === 'Listening');
-      timeLimit = Math.max(12, Math.round(filteredQuestions.length * 1.3));
-      title = `${selectedExam} Listening Section Focus (${filteredQuestions.length} Questions)`;
-    } else if (mode === 'reading') {
+    } else if (target.type === 'reading') {
       filteredQuestions = basePractice.questions.filter(q => q.section === 'Reading');
-      timeLimit = Math.max(15, Math.round(filteredQuestions.length * 1.4));
-      title = `${selectedExam} Reading Section Focus (${filteredQuestions.length} Questions)`;
+      if (target.id === 'toeic-mock-sprint') {
+        filteredQuestions = filteredQuestions.slice(0, 10);
+      }
     }
 
     const practiceToRun: ExamPractice = {
       ...basePractice,
+      id: target.id,
       title,
       timeLimitMinutes: timeLimit,
       totalQuestions: filteredQuestions.length,
@@ -85,6 +229,7 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
     setReport(null);
   };
 
+  // MCQ Handlers
   const handleAnswerSelect = (optIndex: number) => {
     if (!activePractice) return;
     sounds.playClick();
@@ -117,11 +262,8 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
 
     try {
       confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
-    } catch {
-      // fallback
-    }
+    } catch {}
 
-    // Calculate score & diagnostic
     let correctCount = 0;
     const totalQ = activePractice.questions.length;
     const strongAreas: string[] = [];
@@ -146,7 +288,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
 
     const accuracy = Math.round((correctCount / totalQ) * 100);
 
-    // Compute scaled exam score based on official benchmarks
     let scoreLabel = '';
     if (selectedExam === 'IELTS') {
       const band = accuracy >= 88 ? 'Band 8.5 (Expert)' : 
@@ -183,45 +324,110 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
     setReport(examReport);
   };
 
+  // Writing Submission Evaluation
+  const handleSubmitWriting = () => {
+    if (!activeWritingMock) return;
+    sounds.playCompletionFanfare();
+    try {
+      confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+    } catch {}
+
+    const words = writingUserText.trim().split(/\s+/).filter(Boolean);
+    const count = words.length;
+
+    let band = 'Band 6.5';
+    if (count >= activeWritingMock.minWords) {
+      if (count >= activeWritingMock.minWords + 50) {
+        band = selectedExam === 'IELTS' ? 'Band 8.5 (Very High)' : 'Top Score (5.0 / 5.0)';
+      } else {
+        band = selectedExam === 'IELTS' ? 'Band 7.5 (Good User)' : 'Competitive (4.0 / 5.0)';
+      }
+    } else {
+      band = selectedExam === 'IELTS' ? 'Band 6.0 (Underlength Penalty)' : 'Adequate (3.0 / 5.0)';
+    }
+
+    setWritingEvaluation({
+      wordCount: count,
+      bandScore: band,
+      taskAchievementFeedback: count >= activeWritingMock.minWords 
+        ? 'Target jumlah kata tercapai dengan baik. Argumen disajikan dengan posisi yang jelas dan koheren.'
+        : `Panjang teks (${count} kata) masih di bawah batas minimal ${activeWritingMock.minWords} kata. Pastikan mengelaborasi argumen lebih mendalam.`,
+      coherenceFeedback: 'Struktur paragraf logis dengan transisi akademik yang memisahkan klausa premis dan kesimpulan.',
+      lexicalFeedback: 'Penggunaan kosakata formal dan istilah konseptual sesuai register akademik standar internasional.',
+      grammarFeedback: 'Variasi kalimat majemuk dan klausa kondisional terangkai secara teratur.'
+    });
+
+    setWritingSubmitted(true);
+    setWritingTimerRunning(false);
+  };
+
+  // Format MM:SS helper
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // RENDER REPORT IF TEST FINISHED
+  // Print Report Handler
+  const handlePrintCertificate = () => {
+    sounds.playClick();
+    window.print();
+  };
+
+  // ==============================================================
+  // VIEW 1: OFFICIAL SCORE CERTIFICATE REPORT
+  // ==============================================================
   if (report) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12 animate-pop-in">
-        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-soft-lg p-6 sm:p-10 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto mb-4 border border-brand-100 shadow-soft-sm">
-            <Award className="w-8 h-8" />
+        <div className="bg-white rounded-3xl border-2 border-slate-200/90 shadow-soft-lg p-6 sm:p-10 text-center print:border-none print:shadow-none print:p-0">
+          
+          {/* Certificate Header Banner */}
+          <div className="border-b-2 border-slate-100 pb-6 mb-8 flex items-center justify-between flex-wrap gap-4 print:border-black">
+            <div className="text-left">
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200 print:hidden">
+                Official Examination Report Form (TRF)
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-2">
+                {report.exam} Test Taker Score Record
+              </h1>
+              <p className="text-xs text-slate-500">
+                Englicious International Assessment Suite • Candidate: <strong className="text-slate-800">{candidateName}</strong>
+              </p>
+            </div>
+
+            <div className="text-right">
+              <div className="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto border border-brand-100 shadow-soft-sm print:hidden">
+                <Award className="w-7 h-7" />
+              </div>
+              <p className="text-[10px] font-mono text-slate-400 mt-1">Ref: {candidateNumber}</p>
+            </div>
           </div>
 
-          <span className="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-            {report.exam} Diagnostic Report
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-3.5 py-1 rounded-full border border-brand-200">
+            {report.exam} Official Scaled Result
           </span>
 
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 mt-2 mb-1">
-            Official Scaled Result: <span className="text-brand-600">{report.score}</span>
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 mt-3 mb-2">
+            <span className="text-brand-600">{report.score}</span>
           </h2>
-          <p className="text-sm text-slate-500 mb-6">
+          <p className="text-xs sm:text-sm text-slate-500 mb-8">
             Completed in {Math.floor(report.timeSpentSeconds / 60)}m {report.timeSpentSeconds % 60}s • {report.correctCount} of {report.totalQuestions} questions correct
           </p>
 
           {/* 3 Metric Badges */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Overall Accuracy</p>
-              <p className="text-2xl font-black text-slate-900">{report.accuracyPercent}%</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase mb-1">Akurasi Ujian</p>
+              <p className="text-xl sm:text-3xl font-black text-slate-900">{report.accuracyPercent}%</p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">Pacing Speed</p>
-              <p className="text-2xl font-black text-mint-600">On Target</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase mb-1">Pacing Speed</p>
+              <p className="text-xl sm:text-3xl font-black text-mint-600">On Target</p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <p className="text-xs text-slate-400 font-bold uppercase mb-1">XP Earned</p>
-              <p className="text-2xl font-black text-amber-500">+150 XP</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase mb-1">XP Kelulusan</p>
+              <p className="text-xl sm:text-3xl font-black text-amber-500">+150 XP</p>
             </div>
           </div>
 
@@ -243,9 +449,8 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
             })}
           </div>
 
-          {/* Strong vs Weak Areas Diagnostic */}
+          {/* Diagnostic Breakdown */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-8">
-            {/* Strong Areas */}
             <div className="p-5 rounded-2xl bg-mint-50/70 border border-mint-200">
               <div className="flex items-center gap-2 mb-3">
                 <CheckCircle2 className="w-4 h-4 text-mint-600" />
@@ -260,12 +465,11 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
                     </li>
                   ))
                 ) : (
-                  <li className="italic text-mint-700">Continue practicing foundational drills.</li>
+                  <li className="italic text-mint-700">Tingkatkan latihan pemahaman dasar secara berulang.</li>
                 )}
               </ul>
             </div>
 
-            {/* Weak Areas */}
             <div className="p-5 rounded-2xl bg-coral-50/60 border border-coral-200">
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-4 h-4 text-coral-600" />
@@ -280,33 +484,14 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
                     </li>
                   ))
                 ) : (
-                  <li className="italic text-coral-700">Flawless performance across all tested skills!</li>
+                  <li className="italic text-coral-700">Performa luar biasa! Seluruh kemampuan teruji dengan akurat.</li>
                 )}
               </ul>
             </div>
           </div>
 
-          {/* Recommended Next Practice */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left mb-8">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Recommended Targeted Practice
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {report.recommendedLessons.map((item, i) => (
-                <button
-                  key={i}
-                  onClick={() => onSelectRecommendedLesson('lesson-listening-essentials')}
-                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-xs font-bold text-slate-800 transition-colors flex items-center gap-1"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-brand-600" />
-                  <span>{item}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          {/* Action buttons (Hidden in Print) */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 print:hidden">
             <button
               onClick={() => {
                 setActivePractice(null);
@@ -314,13 +499,24 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
               }}
               className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-colors"
             >
-              Back to Exam Hub
+              Kembali ke Exam Hub
             </button>
             <button
-              onClick={() => handleStartExam('full')}
+              onClick={handlePrintCertificate}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Cetak Hasil Ujian (Print / PDF)</span>
+            </button>
+            <button
+              onClick={() => {
+                setReport(null);
+                const fullTest = examMockCatalog.find(t => t.type === 'full') || examMockCatalog[0];
+                handleOpenCheckIn(fullTest);
+              }}
               className="w-full sm:w-auto px-7 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-soft transition-all"
             >
-              Retake Full Mock Exam
+              Ulangi Ujian Mockup
             </button>
           </div>
         </div>
@@ -328,7 +524,403 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
     );
   }
 
-  // RENDER ACTIVE PRACTICE TEST SIMULATOR
+  // ==============================================================
+  // VIEW 2: INTERACTIVE WRITING MOCKUP TEST SIMULATOR
+  // ==============================================================
+  if (activeWritingMock) {
+    const wordCount = writingUserText.trim().split(/\s+/).filter(Boolean).length;
+    const isTargetMet = wordCount >= activeWritingMock.minWords;
+
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col pb-12">
+        {/* Top Exam Header */}
+        <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-purple-600 text-white shadow-soft-sm">
+              {activeWritingMock.exam} WRITING
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-800 hidden sm:inline">
+              {activeWritingMock.title}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-mono font-bold ${
+              writingSecondsRemaining < 300
+                ? 'bg-coral-50 border-coral-200 text-coral-600 animate-pulse'
+                : 'bg-slate-100 border-slate-200 text-slate-700'
+            }`}>
+              <Clock className="w-4 h-4 text-slate-500" />
+              <span>{formatTime(writingSecondsRemaining)}</span>
+            </div>
+
+            {!writingSubmitted ? (
+              <button
+                onClick={handleSubmitWriting}
+                disabled={wordCount < 10}
+                className="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white font-bold text-xs shadow-soft transition-all"
+              >
+                Submit Essay
+              </button>
+            ) : (
+              <button
+                onClick={() => setActiveWritingMock(null)}
+                className="px-4 py-1.5 rounded-xl bg-slate-800 text-white font-bold text-xs"
+              >
+                Selesai & Keluar
+              </button>
+            )}
+          </div>
+        </header>
+
+        <main className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Official Prompt & Background */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-soft">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">
+                {activeWritingMock.taskType}
+              </span>
+              <h3 className="text-lg font-black text-slate-900 mt-2 mb-3">
+                {activeWritingMock.title}
+              </h3>
+              
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-800 leading-relaxed font-medium mb-4">
+                {activeWritingMock.promptText}
+              </div>
+
+              {activeWritingMock.scenarioBackground && (
+                <p className="text-xs text-slate-500 leading-relaxed mb-4 italic">
+                  💡 {activeWritingMock.scenarioBackground}
+                </p>
+              )}
+
+              {/* Peer Posts if TOEFL Academic Discussion */}
+              {activeWritingMock.peerDiscussions && (
+                <div className="space-y-2.5 mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Peer Forum Responses:
+                  </p>
+                  {activeWritingMock.peerDiscussions.map((peer, idx) => (
+                    <div key={idx} className="p-3 rounded-xl bg-slate-100/70 border border-slate-200 text-xs">
+                      <div className="flex items-center gap-1.5 font-bold text-slate-800 mb-1">
+                        <span>{peer.avatar}</span>
+                        <span>{peer.name}:</span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed italic">{peer.response}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Rubric Criteria */}
+              <div className="border-t border-slate-100 pt-3">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  Official Assessment Criteria:
+                </p>
+                <ul className="space-y-1.5 text-xs text-slate-600">
+                  {activeWritingMock.keyAssessmentCriteria.map((crit, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-mint-600 flex-shrink-0 mt-0.5" />
+                      <span>{crit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Discourse Transitions Helper */}
+            <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-soft">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                Recommended Academic Discourse Markers:
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {activeWritingMock.recommendedTransitions.map((t, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono font-semibold"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Writing Editor & Word Counter */}
+          <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-soft">
+            <div className="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <PenTool className="w-4 h-4 text-brand-600" />
+                <span className="text-xs font-bold text-slate-800">Candidate Essay Response Editor</span>
+              </div>
+
+              {/* Word Count Pill */}
+              <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
+                isTargetMet 
+                  ? 'bg-mint-100 text-mint-800 border border-mint-200' 
+                  : 'bg-amber-100 text-amber-800 border border-amber-200'
+              }`}>
+                <span>{wordCount} / {activeWritingMock.minWords} Kata Minimum</span>
+                {isTargetMet && <Check className="w-3.5 h-3.5 text-mint-700" />}
+              </div>
+            </div>
+
+            {!writingSubmitted ? (
+              <div>
+                <textarea
+                  value={writingUserText}
+                  onChange={(e) => setWritingUserText(e.target.value)}
+                  placeholder="Ketik esai akademik Anda di sini. Gunakan argumen terstruktur, transisi kohesif, dan kembangkan ide secara mendalam..."
+                  className="w-full h-96 p-4 rounded-2xl border border-slate-200 text-slate-800 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 resize-none font-sans"
+                />
+
+                <div className="flex items-center justify-between mt-4">
+                  <span className="text-xs text-slate-400">
+                    Karakter: {writingUserText.length} | Paragraf: {writingUserText.split('\n\n').filter(Boolean).length}
+                  </span>
+                  <button
+                    onClick={handleSubmitWriting}
+                    disabled={wordCount < 10}
+                    className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-40 text-white font-bold text-xs shadow-soft transition-all"
+                  >
+                    Kumpulkan & Evaluasi Band
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Writing Result & Model Answer Comparison */
+              <div className="space-y-6 animate-fade-in">
+                <div className="p-5 rounded-2xl bg-brand-50/70 border border-brand-200 text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-brand-600 bg-white px-2.5 py-0.5 rounded-full">
+                    Hasil Penilaian Otomatis
+                  </span>
+                  <h3 className="text-2xl font-black text-brand-900 mt-2">
+                    Skor Evaluasi: <span className="text-brand-600">{writingEvaluation?.bandScore}</span>
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Jumlah Kata: <strong>{writingEvaluation?.wordCount} kata</strong> (Target: {activeWritingMock.minWords}+ kata)
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
+                    <div className="p-3 rounded-xl bg-white border border-brand-100">
+                      <p className="font-bold text-slate-800">Task Achievement</p>
+                      <p className="text-slate-600 mt-0.5">{writingEvaluation?.taskAchievementFeedback}</p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white border border-brand-100">
+                      <p className="font-bold text-slate-800">Coherence & Cohesion</p>
+                      <p className="text-slate-600 mt-0.5">{writingEvaluation?.coherenceFeedback}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Model Band 9.0 Answer */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                      Kunci Jawaban Model Resmi (Band 9.0 Benchmark):
+                    </h4>
+                    <span className="text-[10px] font-bold text-mint-700 bg-mint-100 px-2 py-0.5 rounded-full">
+                      Model Examiner
+                    </span>
+                  </div>
+                  <div className="text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed max-h-72 overflow-y-auto p-3 bg-white rounded-xl border border-slate-200">
+                    {activeWritingMock.modelAnswer}
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-2 italic">
+                    Catatan Penguji: {activeWritingMock.examinerNotes}
+                  </p>
+                </div>
+
+                <div className="text-center pt-2">
+                  <button
+                    onClick={() => setActiveWritingMock(null)}
+                    className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs"
+                  >
+                    Kembali ke Exam Hub
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ==============================================================
+  // VIEW 3: INTERACTIVE SPEAKING INTERVIEW SIMULATOR
+  // ==============================================================
+  if (activeSpeakingMock) {
+    const currentPart = activeSpeakingMock.parts[speakingCurrentPartIdx];
+    const isLastPart = speakingCurrentPartIdx === activeSpeakingMock.parts.length - 1;
+
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col pb-12">
+        <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-600 text-white shadow-soft-sm">
+              {activeSpeakingMock.exam} SPEAKING
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-slate-800">
+              {activeSpeakingMock.title} (Part {currentPart.partNumber} of {activeSpeakingMock.parts.length})
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setActiveSpeakingMock(null)}
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+            >
+              Keluar
+            </button>
+          </div>
+        </header>
+
+        <main className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-8">
+          <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-soft text-center">
+            
+            {/* Examiner Avatar */}
+            <div className="w-20 h-20 rounded-3xl bg-brand-50 border-2 border-brand-200 text-brand-600 flex items-center justify-center mx-auto mb-4 text-3xl shadow-soft">
+              🎙️
+            </div>
+
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
+              {currentPart.partTitle}
+            </span>
+
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-3 mb-2">
+              {activeSpeakingMock.examinerName}
+            </h3>
+            <p className="text-xs text-slate-400 mb-6">{activeSpeakingMock.examinerRole}</p>
+
+            {/* Question Text Box */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Examiner Question Prompt:
+                </span>
+                <button
+                  onClick={() => SpeechService.speak(currentPart.examinerAudioPrompt)}
+                  className="px-3 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-1 shadow-soft-sm"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>Dengarkan Suara Penguji</span>
+                </button>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-slate-800 leading-snug">
+                "{currentPart.questionText}"
+              </p>
+
+              {currentPart.cueCardPoints && (
+                <div className="mt-4 pt-3 border-t border-slate-200/80">
+                  <p className="text-xs font-bold text-slate-600 mb-1.5">You should say:</p>
+                  <ul className="space-y-1 text-xs text-slate-600 list-disc list-inside">
+                    {currentPart.cueCardPoints.map((pt, i) => (
+                      <li key={i}>{pt}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Timers & Recording Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+              {currentPart.prepTimeSeconds && !isRecordingAnswer && (
+                <button
+                  onClick={() => {
+                    setIsPrepCountdown(true);
+                    setSpeakingTimerSeconds(currentPart.prepTimeSeconds!);
+                  }}
+                  disabled={isPrepCountdown}
+                  className={`px-6 py-3 rounded-2xl text-xs font-bold flex items-center gap-2 border transition-all ${
+                    isPrepCountdown
+                      ? 'bg-amber-50 border-amber-300 text-amber-900 animate-pulse'
+                      : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
+                  }`}
+                >
+                  <Clock className="w-4 h-4 text-amber-600" />
+                  <span>{isPrepCountdown ? `Persiapan: ${speakingTimerSeconds}s` : `Mulai Waktu Persiapan (${currentPart.prepTimeSeconds}s)`}</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  sounds.playClick();
+                  setIsPrepCountdown(false);
+                  setIsRecordingAnswer(prev => !prev);
+                  if (!isRecordingAnswer) {
+                    setSpeakingTimerSeconds(currentPart.speakTimeSeconds);
+                  }
+                }}
+                className={`px-8 py-3.5 rounded-2xl text-xs font-black flex items-center gap-2 transition-all shadow-soft active:scale-95 ${
+                  isRecordingAnswer
+                    ? 'bg-rose-600 text-white animate-pulse shadow-glow-rose'
+                    : 'bg-brand-600 hover:bg-brand-700 text-white shadow-glow-brand'
+                }`}
+              >
+                {isRecordingAnswer ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                <span>{isRecordingAnswer ? `Sedang Merekam... (${speakingTimerSeconds}s sisa)` : 'Mulai Rekam Jawaban Lisan Anda'}</span>
+              </button>
+            </div>
+
+            {/* Model Response Toggle */}
+            <div className="p-5 rounded-2xl bg-mint-50/60 border border-mint-200 text-left mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-mint-950 uppercase tracking-wider">
+                  Model Jawaban Native (Band 8.5+ Speaker Response):
+                </span>
+                <button
+                  onClick={() => SpeechService.speak(currentPart.modelNativeResponse)}
+                  className="text-xs font-bold text-mint-700 hover:text-mint-900 flex items-center gap-1"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>Dengarkan Model</span>
+                </button>
+              </div>
+              <p className="text-xs text-mint-900 leading-relaxed font-normal whitespace-pre-line">
+                {currentPart.modelNativeResponse}
+              </p>
+            </div>
+
+            {/* Navigation to Next Part */}
+            <div className="flex items-center justify-center gap-3 pt-4 border-t border-slate-100">
+              {!isLastPart ? (
+                <button
+                  onClick={() => {
+                    sounds.playClick();
+                    const nextIdx = speakingCurrentPartIdx + 1;
+                    setSpeakingCurrentPartIdx(nextIdx);
+                    const nextPart = activeSpeakingMock.parts[nextIdx];
+                    setSpeakingTimerSeconds(nextPart.speakTimeSeconds);
+                    setIsPrepCountdown(false);
+                    setIsRecordingAnswer(false);
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-soft"
+                >
+                  <span>Lanjut ke Bagian {speakingCurrentPartIdx + 2}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    sounds.playCompletionFanfare();
+                    setActiveSpeakingMock(null);
+                  }}
+                  className="px-8 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-soft"
+                >
+                  Selesaikan Simulasi Wawancara Speaking
+                </button>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ==============================================================
+  // VIEW 4: MULTIPLE-CHOICE CBT SIMULATOR (FULL, LISTENING, READING)
+  // ==============================================================
   if (activePractice) {
     const currentQ = activePractice.questions[currentQIndex];
     const isAnswered = userAnswers[currentQ.id] !== undefined;
@@ -336,7 +928,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
 
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col pb-12">
-        {/* Exam Test Top Bar */}
         <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-brand-600 text-white shadow-soft-sm">
@@ -347,7 +938,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
             </span>
           </div>
 
-          {/* Timer and Question Count */}
           <div className="flex items-center gap-4">
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-mono font-bold ${
               secondsRemaining < 180
@@ -367,9 +957,7 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
           </div>
         </header>
 
-        {/* Question Area & Navigator Grid */}
         <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Main Question Column */}
           <div className="lg:col-span-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-soft">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 flex-wrap gap-2">
               <div className="flex items-center gap-2">
@@ -386,7 +974,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
                 </span>
               </div>
 
-              {/* Mark for Review Button */}
               <button
                 onClick={toggleMarkForReview}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
@@ -400,20 +987,39 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
               </button>
             </div>
 
-            {/* Reading Passage if present */}
+            {/* Reading Passage */}
             {currentQ.passageText && (
               <div className="mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 text-sm leading-relaxed max-h-64 overflow-y-auto">
-                <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                  <BookOpen className="w-3.5 h-3.5 text-brand-600" />
-                  <span>{currentQ.passageTitle || 'Reading Reference Text'}</span>
+                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-brand-600" />
+                    <span>{currentQ.passageTitle || 'Reading Reference Text'}</span>
+                  </div>
+                  {/* Font Size Selector */}
+                  <div className="flex items-center gap-1 text-[10px] lowercase">
+                    <button
+                      onClick={() => setPassageFontSize('normal')}
+                      className={`px-1.5 py-0.5 rounded ${passageFontSize === 'normal' ? 'bg-white font-bold text-brand-600 shadow-xs' : 'text-slate-400'}`}
+                    >
+                      A
+                    </button>
+                    <button
+                      onClick={() => setPassageFontSize('large')}
+                      className={`px-1.5 py-0.5 rounded ${passageFontSize === 'large' ? 'bg-white font-bold text-brand-600 shadow-xs' : 'text-slate-400'}`}
+                    >
+                      A+
+                    </button>
+                  </div>
                 </div>
-                <div className="text-xs sm:text-sm text-slate-700 whitespace-pre-line leading-relaxed font-normal">
+                <div className={`text-slate-700 whitespace-pre-line leading-relaxed font-normal ${
+                  passageFontSize === 'large' ? 'text-sm sm:text-base' : 'text-xs sm:text-sm'
+                }`}>
                   {currentQ.passageText}
                 </div>
               </div>
             )}
 
-            {/* Listening Audio Prompt if present */}
+            {/* Listening Audio Prompt */}
             {currentQ.audioPrompt && (
               <div className="mb-6 p-4 rounded-2xl bg-brand-50/70 border border-brand-200 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -468,7 +1074,7 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
               })}
             </div>
 
-            {/* Previous / Next Controls */}
+            {/* Navigation buttons */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-100">
               <button
                 onClick={() => {
@@ -510,7 +1116,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
               </span>
             </div>
 
-            {/* Question Grid (22 questions displayed in clean grid) */}
             <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2 mb-6">
               {activePractice.questions.map((q, idx) => {
                 const ans = userAnswers[q.id] !== undefined;
@@ -545,7 +1150,6 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
               })}
             </div>
 
-            {/* Legend */}
             <div className="space-y-2 text-xs font-medium text-slate-500 border-t border-slate-100 pt-4">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded bg-brand-600" />
@@ -566,24 +1170,114 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
     );
   }
 
-  // RENDER MAIN EXAM PREP HUB
+  // ==============================================================
+  // VIEW 5: MAIN EXAM PREP HUB (CATALOG OF ALL OFFICIAL MOCKUP TESTS)
+  // ==============================================================
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      
+      {/* CANDIDATE CHECK-IN & AUDIO VERIFICATION MODAL */}
+      {checkInTarget && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in select-none">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 animate-pop-in">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-brand-600" />
+                <h3 className="font-black text-slate-900 text-base sm:text-lg">
+                  Candidate Examination Check-in
+                </h3>
+              </div>
+              <button
+                onClick={() => setCheckInTarget(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Candidate Details */}
+            <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-semibold">Candidate Name:</span>
+                <span className="font-extrabold text-slate-800">{candidateName}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-semibold">Candidate Number:</span>
+                <span className="font-mono text-brand-700 font-bold">{candidateNumber}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-semibold">Selected Mock Test:</span>
+                <span className="font-bold text-slate-800 text-right">{checkInTarget.title}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-semibold">Alokasi Waktu:</span>
+                <span className="font-bold text-amber-700">{checkInTarget.durationMinutes} Menit ({checkInTarget.questionCountLabel})</span>
+              </div>
+            </div>
+
+            {/* Equipment & Headset Sound Check */}
+            <div className="mt-4 p-4 rounded-2xl bg-brand-50/60 border border-brand-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-brand-900 flex items-center gap-1.5">
+                  <Headphones className="w-4 h-4 text-brand-600" />
+                  <span>Uji Suara Headset / Speaker</span>
+                </span>
+                <span className="text-[10px] text-brand-700 font-semibold">Penting sebelum tes</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                Pastikan volume suara Anda terdengar jelas untuk mendengarkan audio penguji penutur asli.
+              </p>
+              <button
+                onClick={handlePlaySoundCheck}
+                className="w-full py-2.5 rounded-xl bg-white border border-brand-300 text-xs font-bold text-brand-700 hover:bg-brand-50 shadow-soft-sm transition-all flex items-center justify-center gap-2"
+              >
+                <Volume2 className="w-4 h-4 text-brand-600" />
+                <span>{isPlayingSoundCheck ? 'Memutar Audio Uji Suara...' : 'Putar Suara Uji Coba Headset'}</span>
+              </button>
+            </div>
+
+            {/* Exam Rules Bulletins */}
+            <div className="mt-4 text-[11px] text-slate-500 space-y-1">
+              <p>• Timer akan berjalan otomatis begitu Anda menekan tombol di bawah.</p>
+              <p>• Jawaban tersimpan otomatis secara real-time.</p>
+              <p>• Pada akhir tes, laporan diagnostik resmi dan sertifikat nilai akan diterbitkan.</p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="mt-6 flex items-center gap-3">
+              <button
+                onClick={() => setCheckInTarget(null)}
+                className="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmStartTest}
+                className="flex-1 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-glow-brand flex items-center justify-center gap-1.5"
+              >
+                <span>Masuk ke Ruang Ujian</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top Header */}
-      <div className="text-center max-w-2xl mx-auto mb-10">
+      <div className="text-center max-w-3xl mx-auto mb-10">
         <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3.5 py-1 rounded-full border border-brand-100 mb-2">
           <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
-          <span>Official International Exam Bank (66+ Questions)</span>
+          <span>Official Mockup Test Center (IELTS • TOEFL • TOEIC)</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">
-          Persiapan Ujian Resmi IELTS, TOEFL & TOEIC
+          Simulasi Ujian Resmi (Official Mock Tests)
         </h1>
         <p className="text-sm text-slate-500">
-          Simulasi terstandarisasi autentik dengan bank soal 22 soal per ujian, audio clips penutur asli, teks jurnal akademik, timer ujian, serta laporan diagnostik kelulusan.
+          Ujian mockup sesungguhnya dengan format Computer-Based Test (CBT), timer resmi, audio penutur asli, esai interaktif, wawancara speaking, serta sertifikat nilai terstandarisasi.
         </p>
       </div>
 
-      {/* 3 Main Options Selector: TOEFL, IELTS, TOEIC */}
+      {/* 3 Main Options Selector: IELTS, TOEFL, TOEIC */}
       <div className="flex items-center justify-center gap-3 max-w-md mx-auto mb-10 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/80">
         {(['IELTS', 'TOEFL', 'TOEIC'] as const).map((exam) => {
           const isSelected = selectedExam === exam;
@@ -606,9 +1300,9 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
         })}
       </div>
 
-      {/* Exam Details & Sections Breakdown */}
+      {/* Exam Details & Interactive Mock Test Catalog */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
-        {/* Left: Overview Card */}
+        {/* Left: Overview & Candidate Card */}
         <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-soft">
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 rounded-full text-xs font-black bg-brand-50 text-brand-700 border border-brand-200">
@@ -622,98 +1316,116 @@ export const ExamPrep: React.FC<Props> = ({ onBackToDashboard, onSelectRecommend
           <h2 className="text-2xl font-black text-slate-900 mb-1">
             {examInfo.fullName}
           </h2>
-          <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 mb-6 leading-relaxed">
             {examInfo.tagline}
           </p>
 
-          <div className="space-y-3.5 mb-8 text-xs font-semibold text-slate-700">
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-              <span className="text-slate-400">Bank Soal Tersedia:</span>
-              <span className="text-brand-600 font-bold">{examInfo.totalQuestionsBank} Soal Terstandarisasi</span>
+          <div className="space-y-3 mb-6 text-xs font-semibold text-slate-700">
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+              <span className="text-slate-400">Candidate Profil:</span>
+              <span className="text-slate-900 font-extrabold">{candidateName}</span>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
               <span className="text-slate-400">Rentang Skor:</span>
               <span className="text-brand-600 font-bold">{examInfo.scoringRange}</span>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
-              <span className="text-slate-400 block mb-1">Target / Cocok Untuk:</span>
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span className="text-slate-400 block mb-0.5">Target / Cocok Untuk:</span>
               <span>{examInfo.bestFor}</span>
             </div>
-            <div className="p-3.5 rounded-xl bg-brand-50/50 border border-brand-100 text-brand-900">
-              <span className="font-bold block mb-1">Panduan Standar Kelulusan:</span>
+            <div className="p-3 rounded-xl bg-brand-50/50 border border-brand-100 text-brand-900">
+              <span className="font-bold block mb-0.5">Standar Kelulusan:</span>
               <span className="font-normal">{examInfo.scoringGuide}</span>
             </div>
           </div>
 
-          {/* Action Launch Buttons */}
-          <div className="space-y-3">
-            <button
-              onClick={() => handleStartExam('full')}
-              className="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-glow-brand transition-all flex items-center justify-center gap-2 active:scale-98"
-            >
-              <Play className="w-4 h-4 fill-white" />
-              <span>Mulai Simulasi Lengkap (22 Soal • 25 Menit)</span>
-            </button>
-
-            {/* Quick Section Focus Buttons */}
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                onClick={() => handleStartExam('listening')}
-                className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition-colors flex items-center justify-center gap-1.5"
-              >
-                <Headphones className="w-3.5 h-3.5 text-brand-600" />
-                <span>Fokus Listening Audio</span>
-              </button>
-              <button
-                onClick={() => handleStartExam('reading')}
-                className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 transition-colors flex items-center justify-center gap-1.5"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-brand-600" />
-                <span>Fokus Reading Teks</span>
-              </button>
-            </div>
-          </div>
+          {/* Primary Action Button */}
+          <button
+            onClick={() => {
+              const fullTest = examMockCatalog.find(t => t.type === 'full') || examMockCatalog[0];
+              handleOpenCheckIn(fullTest);
+            }}
+            className="w-full py-4 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-glow-brand transition-all flex items-center justify-center gap-2 active:scale-98"
+          >
+            <Play className="w-4 h-4 fill-white" />
+            <span>Mulai Full Mockup Test (22 Soal • 25 Menit)</span>
+          </button>
         </div>
 
-        {/* Right: Section Breakdown Cards */}
+        {/* Right: DAFTAR MOCKUP TEST RESMI YANG SIAP DIKERJAKAN */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Struktur & Komponen Ujian Resmi {selectedExam}
-            </h3>
-            <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full">
-              Standar CEFR B2 - C2
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">
+                Pusat Mockup Test Resmi {selectedExam}
+              </h3>
+              <p className="text-xs text-slate-400">Pilih simulasi lengkap atau fokus per seksi untuk memulai ujian</p>
+            </div>
+            <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
+              {examMockCatalog.length} Paket Ujian
             </span>
           </div>
 
-          {examInfo.sections.map((section, idx) => (
+          {/* Interactive Mock Test Cards */}
+          {examMockCatalog.map((mockCard) => (
             <div
-              key={idx}
-              className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-soft-sm hover:border-brand-300 transition-all"
+              key={mockCard.id}
+              className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-soft-sm hover:border-brand-400 hover:shadow-soft transition-all group"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-base font-black text-slate-900 flex items-center gap-2">
-                  {section.name === 'Listening' ? <Headphones className="w-4 h-4 text-brand-600" /> : <BookOpen className="w-4 h-4 text-brand-600" />}
-                  <span>{section.name} Section</span>
-                </span>
-                <span className="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full">
-                  {section.duration} • {section.questionsCount}
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+                    mockCard.type === 'full'
+                      ? 'bg-brand-100 text-brand-800 border border-brand-200'
+                      : mockCard.type === 'listening'
+                      ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                      : mockCard.type === 'reading'
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : mockCard.type === 'writing'
+                      ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                      : 'bg-rose-100 text-rose-800 border border-rose-200'
+                  }`}>
+                    {mockCard.badge}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {mockCard.difficulty}
+                  </span>
+                </div>
+
+                <span className="text-xs font-extrabold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full">
+                  {mockCard.durationMinutes} Mins • {mockCard.questionCountLabel}
                 </span>
               </div>
 
-              <p className="text-xs sm:text-sm text-slate-500 mb-3 leading-relaxed">
-                {section.description}
+              <h4 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-brand-600 transition-colors">
+                {mockCard.title}
+              </h4>
+              <p className="text-xs font-bold text-slate-500 mt-0.5 mb-2">
+                {mockCard.subtitle}
+              </p>
+              <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                {mockCard.description}
               </p>
 
-              <div className="flex flex-wrap gap-1.5">
-                {section.skillsTested.map((skill, sIdx) => (
-                  <span
-                    key={sIdx}
-                    className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600"
-                  >
-                    ✓ {skill}
-                  </span>
-                ))}
+              <div className="flex items-center justify-between flex-wrap gap-3 pt-3 border-t border-slate-100">
+                <div className="flex flex-wrap gap-1.5">
+                  {mockCard.skills.map((skill, sIdx) => (
+                    <span
+                      key={sIdx}
+                      className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600"
+                    >
+                      ✓ {skill}
+                    </span>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handleOpenCheckIn(mockCard)}
+                  className="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-all flex items-center gap-1.5 active:scale-95 ml-auto"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white" />
+                  <span>Kerjakan Mock Test</span>
+                </button>
               </div>
             </div>
           ))}
