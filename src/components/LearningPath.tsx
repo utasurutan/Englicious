@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Check, Lock, Play, Sparkles, BookOpen, Clock, 
   Layers, Headphones, MessageCircle, FileText, Award, Trophy, 
-  X, AlertTriangle, ShieldCheck, RotateCcw 
+  X, AlertTriangle, ShieldCheck, RotateCcw, Search 
 } from 'lucide-react';
 import { CURRICULA, PathNode } from '../data/curriculum';
 import { Lesson, SkillCategory } from '../types';
@@ -31,6 +31,7 @@ export const LearningPath: React.FC<Props> = ({
   const [mainView, setMainView] = useState<'path' | 'materials'>('path');
   const [selectedLevel, setSelectedLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Intermediate');
   const [selectedSkill, setSelectedSkill] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   
   // PDF Document Viewer State
   const [selectedPdfDoc, setSelectedPdfDoc] = useState<PdfDocumentData | null>(null);
@@ -156,9 +157,16 @@ export const LearningPath: React.FC<Props> = ({
     });
   }, [curriculum.nodes, effectiveCompletedNodeIds, completedPdfIds, lessons]);
 
-  const filteredNodes = computedNodes.filter(node => 
-    selectedSkill === 'All' ? true : node.category === selectedSkill
-  );
+  const filteredNodes = computedNodes.filter(node => {
+    const matchesSkill = selectedSkill === 'All' ? true : node.category === selectedSkill;
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch = query === '' ? true : (
+      node.title.toLowerCase().includes(query) ||
+      node.description.toLowerCase().includes(query) ||
+      node.category.toLowerCase().includes(query)
+    );
+    return matchesSkill && matchesSearch;
+  });
 
   const completedCount = computedNodes.filter(n => n.status === 'completed').length;
   const isAllLevelCompleted = computedNodes.length > 0 && completedCount === computedNodes.length;
@@ -337,8 +345,31 @@ export const LearningPath: React.FC<Props> = ({
             })}
           </div>
 
+          {/* Search Bar */}
+          <div className="max-w-md mx-auto mb-4">
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari materi, tata bahasa, atau topik..."
+                className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-400/20 shadow-soft-sm transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors"
+                  title="Hapus pencarian"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Skill Filters */}
-          <div className="flex items-center justify-center flex-wrap gap-1.5 mb-12">
+          <div className="flex items-center justify-center flex-wrap gap-1.5 mb-10">
             {skillFilters.map((skill) => {
               const isActive = selectedSkill === skill;
               return (
@@ -361,7 +392,23 @@ export const LearningPath: React.FC<Props> = ({
           </div>
 
           {/* VISUAL LEARNING PATH (Node Line Stepper) */}
-          <div className="relative max-w-xl mx-auto py-4">
+          {filteredNodes.length === 0 ? (
+            <div className="py-12 px-6 text-center bg-white rounded-3xl border border-slate-200 max-w-md mx-auto shadow-soft-sm mb-12 animate-fade-in">
+              <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-bold text-slate-700">Tidak ada materi yang cocok</p>
+              <p className="text-xs text-slate-400 mt-1 mb-4">Coba cari dengan kata kunci lain atau ubah filter keterampilan.</p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedSkill('All');
+                }}
+                className="px-4 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-600 font-bold text-xs transition-colors"
+              >
+                Reset Pencarian & Filter
+              </button>
+            </div>
+          ) : (
+            <div className="relative max-w-xl mx-auto py-4">
             {/* Central connecting stem line */}
             <div className="absolute left-6 sm:left-8 top-10 bottom-10 w-1 bg-slate-200 -z-0 rounded-full" />
 
@@ -525,6 +572,7 @@ export const LearningPath: React.FC<Props> = ({
               </div>
             </div>
           </div>
+          )}
         </div>
       )}
 
