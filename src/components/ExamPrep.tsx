@@ -4,7 +4,7 @@ import {
   RotateCcw, Sparkles, Volume2, Play, Pause, AlertTriangle, ArrowRight, 
   BookOpen, Layers, BarChart3, Headphones, ShieldCheck, Check, 
   Printer, FileText, Send, Mic, MicOff, User, PenTool, ExternalLink, 
-  HelpCircle, X, Sparkle, RefreshCw, Zap 
+  HelpCircle, X, Sparkle, RefreshCw, Zap, Keyboard 
 } from 'lucide-react';
 import { ExamType, ExamPractice, ExamQuestion, ExamReport, UserProfile } from '../types';
 import { 
@@ -47,6 +47,7 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
   const [timerRunning, setTimerRunning] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [passageFontSize, setPassageFontSize] = useState<'normal' | 'large' | 'xlarge'>('normal');
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
 
   // Writing Mock State
   const [writingUserText, setWritingUserText] = useState('');
@@ -278,6 +279,69 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
     setAudioPlaying(true);
     SpeechService.speak(text, 0.95, 1.0, () => setAudioPlaying(false));
   };
+
+  // CBT Standard Keyboard Navigation effect
+  useEffect(() => {
+    if (!activePractice) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is currently typing in an input, textarea, or contentEditable
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      const currentQ = activePractice.questions[currentQIndex];
+
+      // Option Selection: 1-4 or a-d
+      if (key === '1' || key === 'a') {
+        if (currentQ && currentQ.options.length > 0) handleAnswerSelect(0);
+      } else if (key === '2' || key === 'b') {
+        if (currentQ && currentQ.options.length > 1) handleAnswerSelect(1);
+      } else if (key === '3' || key === 'c') {
+        if (currentQ && currentQ.options.length > 2) handleAnswerSelect(2);
+      } else if (key === '4' || key === 'd') {
+        if (currentQ && currentQ.options.length > 3) handleAnswerSelect(3);
+      }
+      // Next: ArrowRight or n
+      else if (e.key === 'ArrowRight' || key === 'n') {
+        if (currentQIndex < activePractice.questions.length - 1) {
+          sounds.playClick();
+          setCurrentQIndex(prev => prev + 1);
+        }
+      }
+      // Prev: ArrowLeft or p
+      else if (e.key === 'ArrowLeft' || key === 'p') {
+        if (currentQIndex > 0) {
+          sounds.playClick();
+          setCurrentQIndex(prev => prev - 1);
+        }
+      }
+      // Flag / Review: f or m
+      else if (key === 'f' || key === 'm') {
+        toggleMarkForReview();
+      }
+      // Replay Audio: r or Space
+      else if (key === 'r' || e.code === 'Space') {
+        if (currentQ && currentQ.audioPrompt && !audioPlaying) {
+          e.preventDefault();
+          handlePlayAudio(currentQ.audioPrompt);
+        }
+      }
+      // Shortcuts guide cheat sheet: ?
+      else if (e.key === '?' || (e.shiftKey && key === '/')) {
+        setShowShortcutsModal(prev => !prev);
+      }
+      // Escape closes cheat sheet
+      else if (e.key === 'Escape') {
+        setShowShortcutsModal(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePractice, currentQIndex, audioPlaying]);
 
   const handleFinishExam = () => {
     if (!activePractice) return;
@@ -961,7 +1025,17 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowShortcutsModal(true)}
+              title="Pintasan Keyboard (Tekan ?)"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+            >
+              <Keyboard className="w-3.5 h-3.5 text-slate-500" />
+              <span>Pintasan CBT</span>
+              <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-300 text-[10px] font-mono text-slate-600 font-bold">?</kbd>
+            </button>
+
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs sm:text-sm font-mono font-bold ${
               secondsRemaining < 180
                 ? 'bg-coral-50 border-coral-200 text-coral-600 animate-pulse'
@@ -1092,6 +1166,9 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <span className="flex-1 leading-relaxed">{opt}</span>
+                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] font-mono text-slate-400 font-bold">
+                      {idx + 1}
+                    </kbd>
                   </button>
                 );
               })}
@@ -1189,6 +1266,93 @@ export const ExamPrep: React.FC<Props> = ({ user, onBackToDashboard, onSelectRec
             </div>
           </div>
         </main>
+
+        {/* Keyboard Shortcuts Modal (CBT Cheat Sheet) */}
+        {showShortcutsModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-md w-full border border-slate-200 shadow-2xl relative">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+                    <Keyboard className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900">Pintasan Keyboard (CBT Standard)</h3>
+                    <p className="text-[11px] text-slate-400">Navigasi ujian cepat berstandar resmi</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowShortcutsModal(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Pilih Opsi Jawaban</span>
+                  <div className="flex items-center gap-1 font-mono">
+                    <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">1</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">2</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">3</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">4</kbd>
+                    <span className="text-slate-400 text-[10px] mx-1">atau</span>
+                    <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">A-D</kbd>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Soal Selanjutnya (Next)</span>
+                  <div className="flex items-center gap-1 font-mono">
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">→</kbd>
+                    <span className="text-slate-400 text-[10px]">atau</span>
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">N</kbd>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Soal Sebelumnya (Previous)</span>
+                  <div className="flex items-center gap-1 font-mono">
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">←</kbd>
+                    <span className="text-slate-400 text-[10px]">atau</span>
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">P</kbd>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Tandai untuk Ditinjau (Flag)</span>
+                  <div className="flex items-center gap-1 font-mono">
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">F</kbd>
+                    <span className="text-slate-400 text-[10px]">atau</span>
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">M</kbd>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Putar Audio Listening</span>
+                  <div className="flex items-center gap-1 font-mono">
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">Space</kbd>
+                    <span className="text-slate-400 text-[10px]">atau</span>
+                    <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800">R</kbd>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-slate-600 font-medium">Buka Panduan Pintasan Ini</span>
+                  <kbd className="px-2 py-0.5 rounded bg-white border border-slate-200 shadow-xs font-bold text-slate-800 font-mono">?</kbd>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowShortcutsModal(false)}
+                className="w-full mt-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-soft transition-colors"
+              >
+                Mengerti (Lanjutkan Ujian)
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
